@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en"><Esri><CreaDate>20220318</CreaDate><CreaTime>08343600</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\BuildPyramids" Date="20220318" Time="083436">BuildPyramids B:\landuse\version2\isle_51093\input\isle_51093_landcover_2018_v2.tif -1 NONE Nearest DEFAULT 75 OVERWRITE</Process><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\AddField" Date="20220321" Time="124654">AddField B:\landuse\version2\isle_51093\input\isle_51093_landcover_2018_v2.tif LandCover Text # # # # NULLABLE NON_REQUIRED #</Process><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\CalculateField" Date="20220321" Time="124711">CalculateField B:\landuse\version2\isle_51093\input\isle_51093_landcover_2018_v2.tif LandCover landcover(!Value!) "Python 3" "def landcover(Value):
+        if Value == 0:
+            return "No Data"
+        elif Value == 1:
+            return "Water"
+        elif Value == 2:
+            return "Emergent Wetlands"
+        elif Value == 3:
+            return "Tree Canopy"
+        elif Value == 4:
+            return "Scrub\Shrub"
+        elif Value == 5:
+            return "Herbaceous"
+        elif Value == 6: 
+            return "Barren"
+        elif Value == 7:
+            return "Structures"
+        elif Value == 8:
+            return "Other Impervious"
+        elif Value == 9:
+            return "Roads"
+        elif Value == 10:
+            return "Tree Canopy over Structures"
+        elif Value == 11:
+            return "Tree Canopy over Other Impervious"
+        elif Value == 12:
+            return "Tree Canopy over Roads"
+    " Text NO_ENFORCE_DOMAINS</Process><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\AddField" Date="20220321" Time="124720">AddField B:\landuse\version2\isle_51093\input\isle_51093_landcover_2018_v2.tif Red "Short (small integer)" # # # # NULLABLE NON_REQUIRED #</Process><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\CalculateField" Date="20220321" Time="124736">CalculateField B:\landuse\version2\isle_51093\input\isle_51093_landcover_2018_v2.tif Red RedValue(!Value!) "Python 3" "def RedValue(Value):
+        if Value == 0:
+            return 0
+        elif Value == 1:
+            return 0
+        elif Value == 2:
+            return 0
+        elif Value == 3:
+            return 38
+        elif Value == 4:
+            return 76
+        elif Value == 5:
+            return 163
+        elif Value == 6:
+            return 255
+        elif Value == 7:
+            return 255
+        elif Value == 8:
+            return 156
+        elif Value == 9:
+            return 0
+        elif Value == 10:
+            return 115
+        elif Value == 11:
+            return 230
+        elif Value == 12:
+            return 255
+    " Text NO_ENFORCE_DOMAINS</Process><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\AddField" Date="20220321" Time="124744">AddField B:\landuse\version2\isle_51093\input\isle_51093_landcover_2018_v2.tif Green "Short (small integer)" # # # # NULLABLE NON_REQUIRED #</Process><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\CalculateField" Date="20220321" Time="124758">CalculateField B:\landuse\version2\isle_51093\input\isle_51093_landcover_2018_v2.tif Green GreenValue(!Value!) "Python 3" "def GreenValue(Value):
+        if Value == 0:
+            return 0
+        elif (Value == 1):
+            return 197
+        elif Value == 2:
+            return 168
+        elif Value == 3:
+            return 115
+        elif Value == 4:
+            return 230
+        elif Value == 5:
+            return 255
+        elif Value == 6:
+            return 170
+        elif Value == 7:
+            return 0
+        elif Value == 8:
+            return 156
+        elif Value == 9:
+            return 0
+        elif Value == 10:
+            return 115
+        elif Value == 11:
+            return 230
+        elif Value == 12:
+            return 255
+    " Text NO_ENFORCE_DOMAINS</Process><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\AddField" Date="20220321" Time="124807">AddField B:\landuse\version2\isle_51093\input\isle_51093_landcover_2018_v2.tif Blue "Short (small integer)" # # # # NULLABLE NON_REQUIRED #</Process><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\CalculateField" Date="20220321" Time="124822">CalculateField B:\landuse\version2\isle_51093\input\isle_51093_landcover_2018_v2.tif Blue BlueValue(!Value!) "Python 3" "def BlueValue(Value):
+        if Value == 0:
+            return 0
+        elif Value == 1:
+            return 255
+        elif Value == 2:
+            return 132
+        elif Value == 3:
+            return 0
+        elif Value == 4:
+            return 0
+        elif Value == 5:
+            return 115
+        elif Value == 6:
+            return 0
+        elif Value == 7:
+            return 0
+        elif Value == 8:
+            return 156
+        elif Value == 9:
+            return 0
+        elif Value == 10:
+            return 0
+        elif Value == 11:
+            return 0
+        elif Value == 12:
+            return 115
+    " Text NO_ENFORCE_DOMAINS</Process></lineage></DataProperties></Esri></metadata>

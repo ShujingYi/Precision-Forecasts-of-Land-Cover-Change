@@ -1,0 +1,121 @@
+---
+title: "eda"
+author: "Xinge Zhang"
+date: "2023-01-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+## R Markdown
+
+Load libary
+
+```{r cars}
+library(RColorBrewer)
+library(tidyverse)
+library(sf)
+library(raster)
+library(knitr)
+library(kableExtra)
+library(tidycensus)
+library(tigris)
+library(FNN)
+library(caret)
+library(yardstick)
+library(pscl)
+library(plotROC) 
+library(ggrepel)
+library(pROC)
+library(grid)
+library(gridExtra)
+library(viridis)
+library(igraph)
+library(ggplot2)
+library(RColorBrewer)
+plotTheme <- theme(
+  plot.title =element_text(size=12),
+  plot.subtitle = element_text(size=8),
+  plot.caption = element_text(size = 6),
+  axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+  axis.text.y = element_text(size = 10),
+  axis.title.y = element_text(size = 10),
+  # Set the entire chart region to blank
+  panel.background=element_blank(),
+  plot.background=element_blank(),
+  #panel.border=element_rect(colour="#F0F0F0"),
+  # Format the grid
+  panel.grid.major=element_line(colour="#D0D0D0",size=.75),
+  axis.ticks=element_blank())
+
+mapTheme <- theme(plot.title =element_text(size=12),
+                  plot.subtitle = element_text(size=8),
+                  plot.caption = element_text(size = 6),
+                  axis.line=element_blank(),
+                  axis.text.x=element_blank(),
+                  axis.text.y=element_blank(),
+                  axis.ticks=element_blank(),
+                  axis.title.x=element_blank(),
+                  axis.title.y=element_blank(),
+                  panel.background=element_blank(),
+                  panel.border=element_blank(),
+                  panel.grid.major=element_line(colour = 'transparent'),
+                  panel.grid.minor=element_blank(),
+                  legend.direction = "vertical", 
+                  legend.position = "right",
+                  plot.margin = margin(1, 1, 1, 1, 'cm'),
+                  legend.key.height = unit(1, "cm"), legend.key.width = unit(0.2, "cm"))
+
+palette2 <- brewer.pal(2,"YlOrRd")
+palette4 <- brewer.pal(4,"YlOrRd")
+palette5 <- brewer.pal(5,"YlOrRd")
+palette10 <- brewer.pal(10,"RdYlBu")
+
+#this function converts a column in to quintiles. It is used for mapping.
+quintileBreaks <- function(df,variable) {
+    as.character(quantile(df[[variable]],
+                          c(.01,.2,.4,.6,.8),na.rm=T))
+}
+
+#This function can be used to convert a polygon sf to centroids xy coords.
+xyC <- function(aPolygonSF) {
+  as.data.frame(
+    cbind(x=st_coordinates(st_centroid(aPolygonSF))[,1],
+          y=st_coordinates(st_centroid(aPolygonSF))[,2]))
+} 
+
+#this function convert a raster to a data frame so it can be plotted in ggplot
+rast <- function(inRaster) {
+  data.frame(
+    xyFromCell(inRaster, 1:ncell(inRaster)), 
+    value = getValues(inRaster)) }
+```
+
+## Landcoverdata
+
+
+```{r pressure, echo=FALSE}
+islelc_14 = raster("~/Github/Practicum/Data/lc/isle_51093_lc_2014/isle_51093_landcover_2014.tif")
+islelc_18 = raster("~/Github/Practicum/Data/lc/isle_51093_lc_2018/isle_51093_landcover_2018.tif")
+islelc_change = raster("~/Github/Practicum/Data/lc/isle_51093_lc_change_2014_2018/isle_51093_landcoverchange_20142018.tif")
+jamelc_14 = raster("~/Github/Practicum/Data/lc/jame_51095_lc_2014/jame_51095_landcover_2014.tif")
+jamelc_18 = raster("~/Github/Practicum/Data/lc/jame_51095_lc_2018/jame_51095_landcover_2018.tif")
+jamelc_change = raster("~/Github/Practicum/Data/lc/jame_51095_lc_change_2014_2018/jame_51095_landcoverchange_20142018.tif")
+portlc_14 = raster("~/Github/Practicum/Data/lc/port_51740_lc_2014/port_51740_landcover_2014.tif")
+portlc_18 = raster("~/Github/Practicum/Data/lc/port_51740_lc_2018/port_51740_landcover_2018.tif")
+portlc_change = raster("~/Github/Practicum/Data/lc/port_51740_lc_change_2014_2018/port_51740_landcoverchange_20142018.tif")
+```
+
+```{r}
+ggplot() +
+  geom_sf(data=houstonMSA) +
+  geom_raster(data=rast(lc_change) %>% na.omit %>% filter(value > 0), 
+              aes(x,y,fill=as.factor(value))) +
+  scale_fill_viridis(direction = -1, discrete=TRUE, name ="Land Cover\nChange") +
+  labs(title = "Land Cover Change, 2000-2010") +
+  mapTheme +
+  theme(legend.direction="horizontal")
+```
+

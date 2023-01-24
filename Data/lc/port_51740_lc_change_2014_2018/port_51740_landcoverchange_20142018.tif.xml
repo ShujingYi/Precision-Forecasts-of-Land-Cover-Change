@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="en"><Esri><CreaDate>20220319</CreaDate><CreaTime>16003600</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files\arcgis\pro\Resources\ArcToolbox\toolboxes\Data Management Tools.tbx\BuildPyramids" Date="20220319" Time="160036">BuildPyramids B:\landuse\version2\port_51740\input\port_51740_landcoverchange_20142018_v2.tif -1 NONE Nearest DEFAULT 75 OVERWRITE</Process></lineage></DataProperties></Esri></metadata>
