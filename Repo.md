@@ -19,7 +19,7 @@ Understanding the quality and quantity of types of impervious services & Differe
 
 **Prediction model**: Predict land cover change (from pervious to impervious)
 
-**Web App**: To create an app to visualize which lands are likely to switch from pervious to impervious.⇒ know the impacts of land use change, the potential climate impacts and recognize the differences among counties.
+**Web App**: To create an app to visualize which lands are likely to switch from pervious to impervious.⇒ know the impacts of land cover change, the potential climate impacts and recognize the differences among counties.
 
 ### Some questions
 1. They said they want to find some lands that are more climate resilient, since pervious lands are more resilient to climate change, so why should we predict the change from pervious to impervious? What factors driven land to change from pervious to impervious? 
