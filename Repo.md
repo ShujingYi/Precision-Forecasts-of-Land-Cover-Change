@@ -34,6 +34,8 @@ Understanding the quality and quantity of types of impervious services & Differe
 **Which are the biophysical attributes associated with land cover changes**
 
 - elevation, slope, soil type
+- Climate change (temperature, precipitation)
+- Flood
 - greenhouse gas/carbon emission
 - pattern of vegetation change
 
