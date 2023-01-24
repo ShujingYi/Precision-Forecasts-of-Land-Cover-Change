@@ -22,11 +22,21 @@ Understanding the quality and quantity of types of impervious services & Differe
 **Web App**: To create an app to visualize which lands are likely to switch from pervious to impervious.⇒ know the impacts of land use change, the potential climate impacts and recognize the differences among counties.
 
 # Exploratory Analysis
-**Which are the human factors associated with land use changes**
+**Which are the social, political and economic factors associated with land use changes**
 
+Possible features: economic: underlying driving forces (e.g. influence of markets, distances to a road or a town)
+                   social: population
+                   political: land management technologies, infrastructures or land-use policies.
 
-**Which are the environmental factors associated with land use changes**
+**Which are the biophysical attributes associated with land use changes**
+
+Possible features: elevation, slope, soil type, greenhouse gas/carbon emission, pattern of vegetation change,
+
+**Which are the land-cover or land-use modifications associated with land use changes**
+
+Possible features: changes in cropping patterns, input use or tree density of forests, the distribution and frequency of disturbances (e.g., hurricanes, tornadoes, fires, and insects) and the responses of organisms to disturbance
 
 
 **What size cell is the appropriate analysis cell**
 
+Possible cell range: 15-30m
