@@ -42,6 +42,9 @@ Possible features: changes in cropping patterns, input use or tree density of fo
 Possible cell range: 15-30m
 
 # Team roles
-Project Management: Shujing Yi
-R Markdown development: Xinge Zhang
-App Development: Yuewen Dai
+
+- Project Management: Shujing Yi
+
+- R Markdown development: Xinge Zhang
+
+- App Development: Yuewen Dai
