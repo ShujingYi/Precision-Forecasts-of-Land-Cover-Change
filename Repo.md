@@ -34,7 +34,9 @@ Possible features: elevation, slope, soil type, greenhouse gas/carbon emission, 
 
 **Which are the land-cover or land-use modifications associated with land use changes**
 
-Possible features: changes in cropping patterns, input use or tree density of forests, the distribution and frequency of disturbances (e.g., hurricanes, tornadoes, fires, and insects) and the responses of organisms to disturbance
+Possible features: changes in cropping patterns, input use or tree density of forests, 
+                   the distribution and frequency of disturbances (e.g., hurricanes, tornadoes, fires, and insects)
+                   Features derived from original LU/LC data
 
 
 **What size cell is the appropriate analysis cell**
