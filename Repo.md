@@ -20,3 +20,9 @@ Understanding the quality and quantity of types of impervious services & Differe
 **Prediction model**: Predict land use change (from pervious to impervious)
 
 **Web App**: To create an app to visualize which lands are likely to switch from pervious to impervious.⇒ know the impacts of land use change, the potential climate impacts and recognize the differences among counties.
+
+# Exploratory Analysis
+**Which are the human factors associated with land use changes**
+**Which are the environmental factors associated with land use changes**
+**What size cell is the appropriate analysis cell**
+
