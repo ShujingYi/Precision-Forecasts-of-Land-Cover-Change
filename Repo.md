@@ -1,7 +1,7 @@
 # Use case
 **Clients' Work**:
 The client work for the southeastern planning association on water policy, landscape planning, adaption issues.
-Try to develop data tools to provide information to their locality so that they can make informed land use and other planning decisions.
+Try to develop data tools to provide information to their locality so that they can make informed land cover and other planning decisions.
 The client don’t make decision, instead, they provide information.
 
 **What they care**:
