@@ -26,9 +26,9 @@ Understanding the quality and quantity of types of impervious services & Differe
 
 # Exploratory Analysis
 **How to work with big data?**
-R can't plot the dataset
-What's the alternative?
-ArcGIS, Python (dask), other suggestions?
+- R can't plot the dataset
+- What's the alternative? ArcGIS, Python (dask), other suggestions?
+
 **Which are the social, political and economic factors associated with land cover changes**
 
 - economic: underlying driving forces (e.g. influence of markets, distances to a road or a town)
