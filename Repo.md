@@ -24,28 +24,26 @@ Understanding the quality and quantity of types of impervious services & Differe
 # Exploratory Analysis
 **Which are the social, political and economic factors associated with land use changes**
 
-Possible features: economic: underlying driving forces (e.g. influence of markets, distances to a road or a town)
-
-                   social: population
-                   
-                   political: land management technologies, infrastructures or land-use policies.
+- economic: underlying driving forces (e.g. influence of markets, distances to a road or a town)
+- social: population                  
+- political: land-use policies/planning regoin
 
 **Which are the biophysical attributes associated with land use changes**
 
-Possible features: elevation, slope, soil type, greenhouse gas/carbon emission, pattern of vegetation change,
+- elevation, slope, soil type
+- greenhouse gas/carbon emission
+- pattern of vegetation change
 
 **Which are the land-cover or land-use modifications associated with land use changes**
 
-Possible features: changes in cropping patterns, input use or tree density of forests, 
-
-                   the distribution and frequency of disturbances (e.g., hurricanes, tornadoes, fires, and insects)
-                   
-                   Features derived from original LU/LC data
+- changes in cropping patterns, input use or tree density of forests
+- the distribution and frequency of disturbances (e.g., hurricanes, tornadoes, fires, and insects)                  
+- Features derived from original LU/LC data
 
 
 **What size cell is the appropriate analysis cell**
 
-Possible cell range: 15-30m
+- Possible cell range: 15-30m
 
 # Team roles
 
