@@ -25,19 +25,19 @@ Understanding the quality and quantity of types of impervious services & Differe
 1. They said they want to find some lands that are more climate resilient, since pervious lands are more resilient to climate change, so why should we predict the change from pervious to impervious? What factors driven land to change from pervious to impervious? 
 
 # Exploratory Analysis
-**Which are the social, political and economic factors associated with land use changes**
+**Which are the social, political and economic factors associated with land cover changes**
 
 - economic: underlying driving forces (e.g. influence of markets, distances to a road or a town)
 - social: population                  
 - political: land-use policies/planning regoin
 
-**Which are the biophysical attributes associated with land use changes**
+**Which are the biophysical attributes associated with land cover changes**
 
 - elevation, slope, soil type
 - greenhouse gas/carbon emission
 - pattern of vegetation change
 
-**Which are the land-cover or land-use modifications associated with land use changes**
+**Which are the land-cover or land-use modifications associated with land cover changes**
 
 - changes in cropping patterns, input use or tree density of forests
 - the distribution and frequency of disturbances (e.g., hurricanes, tornadoes, fires, and insects)                  
@@ -55,3 +55,9 @@ Understanding the quality and quantity of types of impervious services & Differe
 - R Markdown development: Xinge Zhang
 
 - App Development: Yuewen Dai
+
+# Reference
+Dale, Virginia H. “THE RELATIONSHIP BETWEEN LAND-USE CHANGE AND CLIMATE CHANGE.” Ecological Applications 7, no. 3 (August 1997): 753–69. https://doi.org/10.1890/1051-0761(1997)007[0753:TRBLUC]2.0.CO;2.
+
+Veldkamp, A, and E.F Lambin. “Predicting Land-Use Change.” Agriculture, Ecosystems & Environment 85, no. 1–3 (June 2001): 1–6. https://doi.org/10.1016/S0167-8809(01)00199-2.
+
