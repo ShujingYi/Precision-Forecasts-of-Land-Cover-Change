@@ -17,7 +17,7 @@ Know how land will change and then better plan.
 Understanding the quality and quantity of types of impervious services & Differences in these three localities.
 
 
-**Prediction model**: Predict land use change (from pervious to impervious)
+**Prediction model**: Predict land cover change (from pervious to impervious)
 
 **Web App**: To create an app to visualize which lands are likely to switch from pervious to impervious.⇒ know the impacts of land use change, the potential climate impacts and recognize the differences among counties.
 
