@@ -25,6 +25,10 @@ Understanding the quality and quantity of types of impervious services & Differe
 1. They said they want to find some lands that are more climate resilient, since pervious lands are more resilient to climate change, so why should we predict the change from pervious to impervious? What factors driven land to change from pervious to impervious? 
 
 # Exploratory Analysis
+**How to work with big data?**
+R can't plot the dataset
+What's the alternative?
+ArcGIS, Python (dask), other suggestions?
 **Which are the social, political and economic factors associated with land cover changes**
 
 - economic: underlying driving forces (e.g. influence of markets, distances to a road or a town)
