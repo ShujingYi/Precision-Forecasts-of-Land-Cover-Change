@@ -23,6 +23,10 @@ Understanding the quality and quantity of types of impervious services & Differe
 
 # Exploratory Analysis
 **Which are the human factors associated with land use changes**
+
+
 **Which are the environmental factors associated with land use changes**
+
+
 **What size cell is the appropriate analysis cell**
 
