@@ -5,6 +5,7 @@ date: "2023-01-24"
 output: html_document
 ---
 
+R setup
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(sf)
@@ -88,35 +89,27 @@ rast <- function(inRaster) {
     value = getValues(inRaster)) }
 ```
 
+Read the data
 ```{r}
-isle_2014 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/isle_2014")%>%
+isle_bound<- st_read("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/isle/Precincts2022")%>%
+  st_transform('ESRI:102741')
+
+```
+
+```{r}
+isle_2014 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/isle_2014")%>%
   crop(y = isle_bound %>% st_transform(crs(isle_2014)))
-isle_2018 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/isle_2018")
-port_2014 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/port_2014")
-port_2018 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/port_2018")
-james_2014 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/james_2014")
-james_2018 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/james_2018")
-
-
-
-# reshape the object into a matrix with columns and rows
-reclass_m <- matrix(reclass_df,
-                ncol = 3,
-                byrow = TRUE)
-
-# perfrom the reclassification
-isle_2014 <- reclassify(isle_2014, reclass_m)
-# set a min and max value for the raster
-isle_2014 <- setMinMax(isle_2014)
+isle_2018 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/isle_2018")
+port_2014 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/port_2014")
+port_2018 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/port_2018")
+james_2014 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/james_2014")
+james_2018 <- raster("DD:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/james_2018")
 
 ```
 
 
-
+Create fishnet
 ```{r}
-isle_bound<- st_read("D:/0MUSA/MUSA801/data/isle/Precincts2022")%>%
-  st_transform('ESRI:102741')
-
 isle_fishnet <- 
   st_make_grid(isle_bound,
                cellsize = 1000, 
@@ -130,12 +123,13 @@ isle_fishnet$cellsize <- as.numeric(st_area(isle_fishnet$geometry))
 
 ggplot() +
   geom_sf(data = isle_fishnet, fill = "black", color = "white", stroke = 0.1) +
-  labs(title = "Fishnet, 1.5 sq.mi. area per cell",
-       subtitle = "Nouth Region (Butte and Lassen-Modoc) of California, CA Fire District") +
+  labs(title = "Fishnet, xx sq.mi. area per cell",
+       subtitle = "Isle of Wight County, Virginia South") +
   mapTheme
 
 ```
 
+join data to fishnet
 ```{r}
 #join the landcover data
 isle_net <- cbind(isle_fishnet, exact_extract(isle_2014, 
@@ -159,6 +153,7 @@ isle_net <- isle_net %>%
   mutate(landcover = as.factor(landcover))
 ```
 
+plot
 ```{r}
 ggplot() +
   geom_sf(data = isle_net, aes(fill = landcovername), colour = NA) +
@@ -174,9 +169,10 @@ ggplot() +
                                "Tree Canopy over Other Impervious" = "#ca9146",
                                "Tree Canopy over Structures" = "#c8e6f8",
                                "Emergent Wetlands" = "#64b3d5")) +
-  labs(title = "Land Cover in Northeastern CA") +
+  labs(title = "Land Cover in Isle County") +
   mapTheme
 ```
+
 Questions:
 1.Fishnet size should be different among three counties?
 2.some categories take small proportion of one fishnet cell(category>9), so that these categories can't be joined to fishnet
