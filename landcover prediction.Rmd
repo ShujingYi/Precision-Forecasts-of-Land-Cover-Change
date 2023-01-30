@@ -1,0 +1,182 @@
+---
+title: "Land cover prediction"
+author: "Yuewen Dai"
+date: "2023-01-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(sf)
+library(raster)
+library(knitr)
+library(kableExtra)
+library(tidycensus)
+library(tigris)
+library(FNN)
+#library(QuantPsyc) # JE Note: in R 4.1, QuantPsyc package not available.
+library(caret)
+library(yardstick)
+library(pscl)
+library(plotROC) 
+library(ggrepel)
+library(pROC)
+library(grid)
+library(gridExtra)
+library(viridis)
+library(igraph)
+library(exactextractr)
+
+plotTheme <- theme(
+  plot.title =element_text(size=12),
+  plot.subtitle = element_text(size=8),
+  plot.caption = element_text(size = 6),
+  axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+  axis.text.y = element_text(size = 10),
+  axis.title.y = element_text(size = 10),
+  # Set the entire chart region to blank
+  panel.background=element_blank(),
+  plot.background=element_blank(),
+  #panel.border=element_rect(colour="#F0F0F0"),
+  # Format the grid
+  panel.grid.major=element_line(colour="#D0D0D0",size=.75),
+  axis.ticks=element_blank())
+
+mapTheme <- theme(plot.title =element_text(size=12),
+                  plot.subtitle = element_text(size=8),
+                  plot.caption = element_text(size = 6),
+                  axis.line=element_blank(),
+                  axis.text.x=element_blank(),
+                  axis.text.y=element_blank(),
+                  axis.ticks=element_blank(),
+                  axis.title.x=element_blank(),
+                  axis.title.y=element_blank(),
+                  panel.background=element_blank(),
+                  panel.border=element_blank(),
+                  panel.grid.major=element_line(colour = 'transparent'),
+                  panel.grid.minor=element_blank(),
+                  legend.direction = "vertical", 
+                  legend.position = "right",
+                  plot.margin = margin(1, 1, 1, 1, 'cm'),
+                  legend.key.height = unit(1, "cm"), legend.key.width = unit(0.2, "cm"))
+
+palette2 <- c("#41b6c4","#253494")
+palette4 <- c("#a1dab4","#41b6c4","#2c7fb8","#253494")
+palette5 <- c("#ffffcc","#a1dab4","#41b6c4","#2c7fb8","#253494")
+palette10 <- c("#f7fcf0","#e0f3db","#ccebc5","#a8ddb5","#7bccc4",
+               "#4eb3d3","#2b8cbe","#0868ac","#084081","#f7fcf0")
+```
+
+```{r}
+#this function converts a column in to quintiles. It is used for mapping.
+quintileBreaks <- function(df,variable) {
+    as.character(quantile(df[[variable]],
+                          c(.01,.2,.4,.6,.8),na.rm=T))
+}
+
+#This function can be used to convert a polygon sf to centroids xy coords.
+xyC <- function(aPolygonSF) {
+  as.data.frame(
+    cbind(x=st_coordinates(st_centroid(aPolygonSF))[,1],
+          y=st_coordinates(st_centroid(aPolygonSF))[,2]))
+} 
+
+#this function convert a raster to a data frame so it can be plotted in ggplot
+rast <- function(inRaster) {
+  data.frame(
+    xyFromCell(inRaster, 1:ncell(inRaster)), 
+    value = getValues(inRaster)) }
+```
+
+```{r}
+isle_2014 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/isle_2014")%>%
+  crop(y = isle_bound %>% st_transform(crs(isle_2014)))
+isle_2018 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/isle_2018")
+port_2014 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/port_2014")
+port_2018 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/port_2018")
+james_2014 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/james_2014")
+james_2018 <- raster("D:/0MUSA/MUSA801/data/lc/cell_size_changed/james_2018")
+
+
+
+# reshape the object into a matrix with columns and rows
+reclass_m <- matrix(reclass_df,
+                ncol = 3,
+                byrow = TRUE)
+
+# perfrom the reclassification
+isle_2014 <- reclassify(isle_2014, reclass_m)
+# set a min and max value for the raster
+isle_2014 <- setMinMax(isle_2014)
+
+```
+
+
+
+```{r}
+isle_bound<- st_read("D:/0MUSA/MUSA801/data/isle/Precincts2022")%>%
+  st_transform('ESRI:102741')
+
+isle_fishnet <- 
+  st_make_grid(isle_bound,
+               cellsize = 1000, 
+               square = FALSE) %>%
+  .[isle_bound] %>%            # <- MDH Added
+  st_sf() %>%
+  mutate(uniqueID = rownames(.))
+isle_fishnet$cellsize <- as.numeric(st_area(isle_fishnet$geometry))
+
+ netBorder <- st_union(isle_fishnet) %>% st_as_sf()
+
+ggplot() +
+  geom_sf(data = isle_fishnet, fill = "black", color = "white", stroke = 0.1) +
+  labs(title = "Fishnet, 1.5 sq.mi. area per cell",
+       subtitle = "Nouth Region (Butte and Lassen-Modoc) of California, CA Fire District") +
+  mapTheme
+
+```
+
+```{r}
+#join the landcover data
+isle_net <- cbind(isle_fishnet, exact_extract(isle_2014, 
+isle_fishnet %>% st_transform(crs(isle_2014)),'mode'))%>%
+rename(landcover=exact_extract.isle_2014..isle_fishnet.....st_transform.crs.isle_2014....)
+
+isle_net <- isle_net %>%
+  mutate(landcovername = case_when(landcover == "1" ~ "Water",
+                               landcover == "2" ~ "Emergent Wetlands",
+                               landcover == "3" ~ "Tree Canopy",
+                               landcover== "4" ~ "Scrub/Shrub",
+                               landcover == "5" ~ "Herbaceous",
+                               landcover == "6" ~ "Barren",
+                               landcover == "7" ~ "Structures",
+                               landcover == "8" ~ "Other Impervious",
+                               landcover == "9" ~ "Roads",
+                               landcover == "10" ~ "Tree Canopy over Structures",
+                               landcover == "11" ~ "Tree Canopy over Other Impervious",
+                               landcover == "12" ~ "Tree Canopy over Roads")) %>%
+  mutate(landcover = make.names(landcover)) %>%
+  mutate(landcover = as.factor(landcover))
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = isle_net, aes(fill = landcovername), colour = NA) +
+  scale_fill_manual(values = c("Water" = "#00b4d8",
+                               "Roads" = "#ffffff",
+                               "Other Impervious" = "#e8d1d1",
+                               "Structures" = "#b50000",
+                               "Barren" = "#d2cdc0",
+                               "Tree Canopy" = "#85c77e",
+                               "Scrub/Shrub" = "#dcca8f",
+                               "Herbaceous" = "#fde9aa",
+                               "Tree Canopy over Roads" = "#fbf65d",
+                               "Tree Canopy over Other Impervious" = "#ca9146",
+                               "Tree Canopy over Structures" = "#c8e6f8",
+                               "Emergent Wetlands" = "#64b3d5")) +
+  labs(title = "Land Cover in Northeastern CA") +
+  mapTheme
+```
+Questions:
+1.Fishnet size should be different among three counties?
+2.some categories take small proportion of one fishnet cell(category>9), so that these categories can't be joined to fishnet
