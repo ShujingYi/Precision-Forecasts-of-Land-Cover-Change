@@ -1,11 +1,14 @@
 ---
 title: "Land cover prediction"
-author: "Yuewen Dai"
+author: "Yuewen Dai, Shujing Yi, Xinge Zhang"
 date: "2023-01-24"
 output: html_document
 ---
 
-R setup
+
+
+
+# R setup
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(sf)
@@ -27,6 +30,7 @@ library(gridExtra)
 library(viridis)
 library(igraph)
 library(exactextractr)
+#library(starsExtra)
 
 plotTheme <- theme(
   plot.title =element_text(size=12),
@@ -91,24 +95,25 @@ rast <- function(inRaster) {
 
 Read the data
 ```{r}
-isle_bound<- st_read("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/isle/Precincts2022")%>%
-  st_transform('ESRI:102741')
+isle_bound<- st_read("Data/isle/Precincts2022")%>%
+  st_transform('EPSG:2284')
 
 ```
 
 ```{r}
-isle_2014 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/isle_2014")%>%
-  crop(y = isle_bound %>% st_transform(crs(isle_2014)))
-isle_2018 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/isle_2018")
-port_2014 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/port_2014")
-port_2018 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/port_2018")
-james_2014 <- raster("D:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/james_2014")
-james_2018 <- raster("DD:/0MUSA/MUSA801/Precision-Forecasts-of-Land-Cover-Change/Data/lc/cell_size_changed/james_2018")
+isle_2014 <- raster("Data/lc/cell_size_changed/isle_2014")
+#%>%
+ # crop(y = isle_bound %>% st_transform(crs(isle_2014)))
+isle_2018 <- raster("Data/lc/cell_size_changed/isle_2018")
+port_2014 <- raster("Data/lc/cell_size_changed/port_2014")
+port_2018 <- raster("Data/lc/cell_size_changed/port_2018")
+james_2014 <- raster("Data/lc/cell_size_changed/james_2014")
+james_2018 <- raster("Data/lc/cell_size_changed/james_2018")
 
 ```
 
 
-Create fishnet
+# Create fishnet
 ```{r}
 isle_fishnet <- 
   st_make_grid(isle_bound,
@@ -129,7 +134,7 @@ ggplot() +
 
 ```
 
-join data to fishnet
+# join landcover data to fishnet
 ```{r}
 #join the landcover data
 isle_net <- cbind(isle_fishnet, exact_extract(isle_2014, 
@@ -176,3 +181,53 @@ ggplot() +
 Questions:
 1.Fishnet size should be different among three counties?
 2.some categories take small proportion of one fishnet cell(category>9), so that these categories can't be joined to fishnet
+
+# DEM
+```{r}
+DEM1 <- raster("Data/DEM/USGS_1_n38w077_20170509.tif")
+DEM2 <- raster("Data/DEM/USGS_1_n37w077_20160315.tif")
+DEM <- raster::merge(DEM1, DEM2)
+```
+
+```{r}
+## Define the Proj.4 spatial reference 
+#https://spatialreference.org/ref/epsg/2284/proj4/
+newproj <- "+proj=lcc +lat_1=37.96666666666667 +lat_2=36.76666666666667 +lat_0=36.33333333333334 +lon_0=-78.5 +x_0=3500000.0001016 +y_0=999999.9998983998 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs "
+DEM <- projectRaster(DEM, crs=newproj)
+```
+
+
+```{r}
+DEM_isle <- crop(DEM, isle_bound%>% st_transform(crs(DEM)))
+isle_slope <- terrain (DEM_isle, opt='slope')
+```
+
+```{r}
+#join the elevation data
+isle_net <- cbind(isle_fishnet, exact_extract(DEM_isle, 
+isle_fishnet %>% st_transform(crs(DEM_isle)),'mode'))%>%
+rename(elevation=exact_extract.DEM_isle..isle_fishnet.....st_transform.crs.DEM_isle....)
+```
+
+```{r}
+#join the slope data
+isle_net <- cbind(isle_fishnet, exact_extract(isle_slope, 
+isle_fishnet %>% st_transform(crs(isle_slope)),'mode'))%>%
+rename(slope=exact_extract.isle_slope..isle_fishnet.....st_transform.crs.isle_slope....)
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = isle_net, aes(fill = elevation), colour = NA)
+  labs(title = "Elevation in Isle County") +
+  mapTheme
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = isle_net, aes(fill = slope), colour = NA)
+  labs(title = "Slope in Isle County") +
+  mapTheme
+```
+# Weather
+
