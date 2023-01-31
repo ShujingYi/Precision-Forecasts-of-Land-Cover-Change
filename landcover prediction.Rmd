@@ -5,9 +5,6 @@ date: "2023-01-24"
 output: html_document
 ---
 
-
-
-
 # R setup
 ```{r setup, include=FALSE}
 library(tidyverse)
@@ -204,15 +201,13 @@ isle_slope <- terrain (DEM_isle, opt='slope')
 
 ```{r}
 #join the elevation data
-isle_net <- cbind(isle_fishnet, exact_extract(DEM_isle, 
-isle_fishnet %>% st_transform(crs(DEM_isle)),'mode'))%>%
+isle_net <- cbind(isle_fishnet, exact_extract(DEM_isle, isle_fishnet %>% st_transform(crs(DEM_isle)),'mode'))%>%
 rename(elevation=exact_extract.DEM_isle..isle_fishnet.....st_transform.crs.DEM_isle....)
 ```
 
 ```{r}
 #join the slope data
-isle_net <- cbind(isle_fishnet, exact_extract(isle_slope, 
-isle_fishnet %>% st_transform(crs(isle_slope)),'mode'))%>%
+isle_net <- cbind(isle_fishnet, exact_extract(isle_slope, isle_fishnet %>% st_transform(crs(isle_slope)),'mode'))%>%
 rename(slope=exact_extract.isle_slope..isle_fishnet.....st_transform.crs.isle_slope....)
 ```
 
@@ -229,5 +224,116 @@ ggplot() +
   labs(title = "Slope in Isle County") +
   mapTheme
 ```
-# Weather
+# Population
+
+
+```{r}
+options(tigris_use_cache = TRUE)
+isle_tracts14 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2014, state="51", county="093", geometry=T, output="wide") %>%
+  rename(TotalPop14 = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc14 = B19013_001E,
+         TotalUnit14 = B25002_001E,
+         TotalPoverty = B06012_002E,
+         TotalUnemployment =    B27011_008E) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite14 = ifelse(TotalPop14 > 0, Whites / TotalPop14 * 100,0),
+         pctPoverty14 = ifelse(TotalPop14 > 0, TotalPoverty / TotalPop14 *100, 0),
+         pctUnemploy14 = ifelse(TotalPop14 > 0, TotalUnemployment / TotalPop14 *100, 0)
+         ) %>%
+  dplyr::select(-Whites, -TotalPoverty ,-TotalUnemployment,-GEOID)%>%
+  st_transform(st_crs(isle_net)) 
+
+```
+```{r}
+options(tigris_use_cache = TRUE)
+isle_tracts18 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2018, state="51", county="093", geometry=T, output="wide") %>%
+  rename(TotalPop18 = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc18 = B19013_001E,
+         TotalUnit18 = B25002_001E,
+         TotalPoverty = B06012_002E,
+         TotalUnemployment =    B27011_008E) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite18 = ifelse(TotalPop18 > 0, Whites / TotalPop18 * 100,0),
+         pctPoverty18 = ifelse(TotalPop18 > 0, TotalPoverty / TotalPop18 *100, 0),
+         pctUnemploy18 = ifelse(TotalPop18 > 0, TotalUnemployment / TotalPop18 *100, 0)
+         ) %>%
+  dplyr::select(-Whites, -TotalPoverty ,-TotalUnemployment,-GEOID)%>%
+  st_transform(st_crs(isle_net)) 
+
+```
+
+```{r}
+isle_fishnetPopulation14 <-
+  st_interpolate_aw(isle_tracts14,isle_net, extensive=TRUE) %>%
+  st_drop_geometry() %>%
+  as.data.frame(.) %>%
+  rownames_to_column(var = "uniqueID") %>%
+  left_join(isle_net %>%
+              mutate(uniqueID = as.character(uniqueID)),
+            ., by=c("uniqueID"='uniqueID')) %>% 
+  mutate(TotalPop14 = replace_na(TotalPop14,0),
+         MedHHInc14 = replace_na(MedHHInc14,0),
+         TotalUnit14 = replace_na(TotalUnit14,0),
+          pctWhite14 = replace_na(pctWhite14,0),
+         #pctPoverty14 = replace_na(pctPoverty14,0),
+         #pctUnemploy14 = replace_na(pctUnemploy14,0),
+         ) 
+
+
+isle_fishnetPopulation18 <-
+  st_interpolate_aw(isle_tracts18,isle_net, extensive=TRUE) %>%
+  st_drop_geometry() %>%
+  as.data.frame(.) %>%
+  rownames_to_column(var = "uniqueID") %>%
+  left_join(isle_net %>%
+              mutate(uniqueID = as.character(uniqueID)),
+            ., by=c("uniqueID"='uniqueID')) %>% 
+  mutate(TotalPop18 = replace_na(TotalPop18,0),
+         MedHHInc18 = replace_na(MedHHInc18,0),
+         TotalUnit18 = replace_na(TotalUnit18,0),
+          pctWhite18 = replace_na(pctWhite18,0),
+         #pctPoverty18 = replace_na(pctPoverty18,0),
+        # pctUnemploy18 = replace_na(pctUnemploy18,0)
+        )%>%
+  dplyr::select(TotalPop18, MedHHInc18,TotalUnit18,  pctWhite18,#pctPoverty18, pctUnemploy18
+                )
+
+isle_pop_net <- 
+  cbind(isle_fishnetPopulation14,isle_fishnetPopulation18 %>%
+  st_drop_geometry()) %>%
+  mutate(pop_Change = TotalPop18 - TotalPop14,
+         medinc_Change = MedHHInc18 - MedHHInc14,
+         unit_Change = TotalUnit18- TotalUnit14,
+         wht_Change = pctWhite18 - pctWhite14,
+         #poverty_Change = pctPoverty18 - pctPoverty14,
+         #Unemploy_Change = pctUnemploy18 -pctUnemploy14
+  )
+
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = isle_net, aes(fill = pop_Change), colour = NA)
+  labs(title = "pop_Change in Isle County") +
+  mapTheme
+```
+```{r}
+ggplot() +
+  geom_sf(data = isle_pop_net, aes(fill = pop_Change), colour = NA)
+  labs(title = "pop_Change in Isle County") +
+  mapTheme
+```
+# Road
+```{r}
+isleways <-
+  st_read("https://github.com/mafichman/CPLN_675/raw/main/Week_14_15/data/UGB_Chapter_data/houstonHighways.geojson") %>%
+  st_transform(st_crs(houstonMSA)) %>%
+  st_intersection(houstonMSA)
+```
 
