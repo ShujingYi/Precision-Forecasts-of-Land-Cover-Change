@@ -114,7 +114,7 @@ james_2018 <- raster("Data/lc/cell_size_changed/james_2018")
 ```{r}
 isle_fishnet <- 
   st_make_grid(isle_bound,
-               cellsize = 1000, 
+               cellsize = 100, 
                square = FALSE) %>%
   .[isle_bound] %>%            # <- MDH Added
   st_sf() %>%
@@ -123,11 +123,11 @@ isle_fishnet$cellsize <- as.numeric(st_area(isle_fishnet$geometry))
 
  netBorder <- st_union(isle_fishnet) %>% st_as_sf()
 
-ggplot() +
-  geom_sf(data = isle_fishnet, fill = "black", color = "white", stroke = 0.1) +
-  labs(title = "Fishnet, xx sq.mi. area per cell",
-       subtitle = "Isle of Wight County, Virginia South") +
-  mapTheme
+# ggplot() +
+#   geom_sf(data = isle_fishnet, fill = "black", color = "white", stroke = 0.1) +
+#   labs(title = "Fishnet, xx sq.mi. area per cell",
+#        subtitle = "Isle of Wight County, Virginia South") +
+#   mapTheme
 
 ```
 
@@ -201,14 +201,14 @@ isle_slope <- terrain (DEM_isle, opt='slope')
 
 ```{r}
 #join the elevation data
-isle_net <- cbind(isle_fishnet, exact_extract(DEM_isle, isle_fishnet %>% st_transform(crs(DEM_isle)),'mode'))%>%
-rename(elevation=exact_extract.DEM_isle..isle_fishnet.....st_transform.crs.DEM_isle....)
+isle_net <- cbind(isle_net, exact_extract(DEM_isle, isle_net %>% st_transform(crs(DEM_isle)),'mean'))
+isle_net%>%rename(elevation=exact_extract.DEM_isle..isle_net.....st_transform.crs.DEM_isle....)
 ```
 
 ```{r}
 #join the slope data
-isle_net <- cbind(isle_fishnet, exact_extract(isle_slope, isle_fishnet %>% st_transform(crs(isle_slope)),'mode'))%>%
-rename(slope=exact_extract.isle_slope..isle_fishnet.....st_transform.crs.isle_slope....)
+isle_net <- cbind(isle_net, exact_extract(isle_slope, isle_net %>% st_transform(crs(isle_slope)),'mean'))%>%
+rename(slope=exact_extract.isle_slope..isle_net.....st_transform.crs.isle_slope....)
 ```
 
 ```{r}
