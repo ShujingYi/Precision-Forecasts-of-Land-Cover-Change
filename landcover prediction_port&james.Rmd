@@ -86,7 +86,7 @@ james_18 <- read_stars("Data/lc/jame_51095_lc_2018/jame_51095_landcover_2018.tif
 port_area <- st_read("Data/boundary/portsmouth.shp")
 james_area <- st_read("Data/boundary/James.shp")
 ```
-### Portsmouth_landcover
+## Portsmouth_landcover
 ```{r}
 
 # Transform the test area object to the same CRS as the raster image
@@ -145,4 +145,67 @@ mv(port_14_pcnt_imperv)
 mv(port_18_pcnt_imperv)
 ```
 
-### Portsmouth_landcover
+## James_landcover
+```{r}
+
+# Transform the test area object to the same CRS as the raster image
+james_area <- james_area %>% 
+  st_transform(crs = st_crs(james_14))
+
+# Resample the raster image to 10x10 cells
+james_14_10 <- st_warp(james_14, cellsize = 10, crs = st_crs(james_14))
+james_18_10 <- st_warp(james_18, cellsize = 10, crs = st_crs(james_18))
+# Plot the resampled raster image
+mv(james_14_10) + mv(james_area)
+
+# Crop the resampled raster image to the test area
+james_14_10_crop <- st_crop(james_14_10, james_area)
+james_18_10_crop <- st_crop(james_18_10, james_area)
+# Plot the cropped raster image
+mv(james_area)+mv(james_14_10_crop)
+
+
+```
+
+```{r}
+# Reclassify the cropped raster image
+james_14_10_rc <- james_14_10_crop %>% 
+  mutate(lc = case_when(
+    jame_51095_landcover_2014.tif < 6  ~ 0,
+    jame_51095_landcover_2014.tif >= 6 ~ 1
+  ))
+james_18_10_rc <- james_18_10_crop %>% 
+  mutate(lc = case_when(
+    jame_51095_landcover_2018.tif < 6  ~ 0,
+    jame_51095_landcover_2018.tif >= 6 ~ 1
+  ))
+# Plot the reclassified raster image
+james_lc_14 <- james_14_10_rc["lc"]
+mv(james_lc_14)
+james_lc_18 <- james_18_10_rc["lc"]
+mv(james_lc_18)
+```
+
+```{r}
+# Create a table of values for the reclassified raster image
+table(james_14_10_rc["lc"])
+
+# Calculate the mean value for a 3x3 cell neighborhood
+james_14_pcnt_imperv = focal2(james_14_10_rc["lc"], matrix(1, 3, 3), "mean")
+james_18_pcnt_imperv = focal2(james_18_10_rc["lc"], matrix(1, 3, 3), "mean")
+# histogram of the percentage of 1 (impervious) per 30x30m cell
+hist(james_14_pcnt_imperv$lc)
+
+# Plot the result of the mean calculation
+# Why do these two methods look different?
+plot(james_14_pcnt_imperv)
+plot(james_18_pcnt_imperv)
+mv(james_14_pcnt_imperv)
+mv(james_18_pcnt_imperv)
+```
+
+## Import Climate Data
+### Precipitation
+```{r}
+
+```
