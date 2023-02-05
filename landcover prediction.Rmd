@@ -201,8 +201,7 @@ isle_slope <- terrain (DEM_isle, opt='slope')
 
 ```{r}
 #join the elevation data
-isle_net <- cbind(isle_net, exact_extract(DEM_isle, isle_net %>% st_transform(crs(DEM_isle)),'mean'))
-isle_net%>%rename(elevation=exact_extract.DEM_isle..isle_net.....st_transform.crs.DEM_isle....)
+isle_net <- cbind(isle_net, exact_extract(DEM_isle, isle_net %>% st_transform(crs(DEM_isle)),'mean'))%>%rename(elevation=exact_extract.DEM_isle..isle_net.....st_transform.crs.DEM_isle....)
 ```
 
 ```{r}
