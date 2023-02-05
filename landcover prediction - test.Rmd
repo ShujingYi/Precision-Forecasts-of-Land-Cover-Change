@@ -78,70 +78,40 @@ palette10 <- c("#f7fcf0","#e0f3db","#ccebc5","#a8ddb5","#7bccc4",
 mv <- mapview
 
 # Define the test area using a GeoJSON object
-test_area_geojson <- ('{
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            [
-              -76.39234690920298,
-              36.87876463306954
-            ],
-            [
-              -76.39234690920298,
-              36.834353349364704
-            ],
-            [
-              -76.33074641705893,
-              36.834353349364704
-            ],
-            [
-              -76.33074641705893,
-              36.87876463306954
-            ],
-            [
-              -76.39234690920298,
-              36.87876463306954
-            ]
-          ]
-        ],
-        "type": "Polygon"
-      }
-    }
-  ]
-}')
+isle_area <- st_read("Data/boundary/Isle_of_Wight.shp")
 ```
 
 ```{r}
 # Read in the raster image
-pl_14 <- read_stars("Data/lc/port_51740_lc_2014/port_51740_landcover_2014.tif")
+isle_14 <- read_stars("Data/lc/isle_51093_lc_2014/isle_51093_landcover_2014.tif")
+isle_18 <- read_stars("Data/lc/isle_51093_lc_2018/isle_51093_landcover_2018.tif")
+
+```
+
+```{r}
 
 # Transform the test area object to the same CRS as the raster image
-test_area <- geojson_sf(test_area_geojson, crs = "EPSG::4326") %>% 
-  st_transform(crs = st_crs(pl_14))
+isle_area <- isle_area %>% 
+  st_transform(crs = st_crs(isle_14))
 
 # Resample the raster image to 10x10 cells
-pl_14_10 <- st_warp(pl_14, cellsize = 10, crs = st_crs(pl_14))
+isle_14 <- st_warp(isle_14, cellsize = 10, crs = st_crs(isle_14))
 
 # Plot the resampled raster image
-mv(pl_14_10) + mv(test_area)
+mv(isle_14_10) + mv(isle_area)
 
 # Crop the resampled raster image to the test area
-pl_14_10_crop <- st_crop(pl_14_10, test_area)
+isle_14_10_crop <- st_crop(isle_14_10, isle_area)
 
 # Plot the cropped raster image
-mv(pl_14_10_crop) + mv(test_area)
-
+mv(isle_14_10_crop) + mv(isle_area)
 
 
 ```
+
 ```{r}
 # Reclassify the cropped raster image
-pl_14_10_rc <- pl_14_10_crop %>% 
+isle_14_10_rc <- isle_14_10_crop %>% 
   mutate(lc = case_when(
     port_51740_landcover_2014.tif < 6  ~ 0,
     port_51740_landcover_2014.tif >= 6 ~ 1
@@ -216,89 +186,6 @@ rast <- function(inRaster) {
     value = getValues(inRaster)) }
 ```
 
-
-
-```{r}
-isle_2014 <- raster("Data/lc/cell_size_changed/isle_2014")
-#%>%
- # crop(y = isle_bound %>% st_transform(crs(isle_2014)))
-isle_2018 <- raster("Data/lc/cell_size_changed/isle_2018")
-port_2014 <- raster("Data/lc/cell_size_changed/port_2014")
-port_2018 <- raster("Data/lc/cell_size_changed/port_2018")
-james_2014 <- raster("Data/lc/cell_size_changed/james_2014")
-james_2018 <- raster("Data/lc/cell_size_changed/james_2018")
-
-```
-
-
-# Create fishnet
-```{r}
-isle_fishnet <- 
-  st_make_grid(isle_bound,
-               cellsize = 100, 
-               square = FALSE) %>%
-  .[isle_bound] %>%            # <- MDH Added
-  st_sf() %>%
-  mutate(uniqueID = rownames(.))
-isle_fishnet$cellsize <- as.numeric(st_area(isle_fishnet$geometry))
-
- netBorder <- st_union(isle_fishnet) %>% st_as_sf()
-
-# ggplot() +
-#   geom_sf(data = isle_fishnet, fill = "black", color = "white", stroke = 0.1) +
-#   labs(title = "Fishnet, xx sq.mi. area per cell",
-#        subtitle = "Isle of Wight County, Virginia South") +
-#   mapTheme
-
-```
-
-# join landcover data to fishnet
-```{r}
-#join the landcover data
-isle_net <- cbind(isle_fishnet, exact_extract(isle_2014, 
-isle_fishnet %>% st_transform(crs(isle_2014)),'mode'))%>%
-rename(landcover=exact_extract.isle_2014..isle_fishnet.....st_transform.crs.isle_2014....)
-
-isle_net <- isle_net %>%
-  mutate(landcovername = case_when(landcover == "1" ~ "Water",
-                               landcover == "2" ~ "Emergent Wetlands",
-                               landcover == "3" ~ "Tree Canopy",
-                               landcover== "4" ~ "Scrub/Shrub",
-                               landcover == "5" ~ "Herbaceous",
-                               landcover == "6" ~ "Barren",
-                               landcover == "7" ~ "Structures",
-                               landcover == "8" ~ "Other Impervious",
-                               landcover == "9" ~ "Roads",
-                               landcover == "10" ~ "Tree Canopy over Structures",
-                               landcover == "11" ~ "Tree Canopy over Other Impervious",
-                               landcover == "12" ~ "Tree Canopy over Roads")) %>%
-  mutate(landcover = make.names(landcover)) %>%
-  mutate(landcover = as.factor(landcover))
-```
-
-plot
-```{r}
-ggplot() +
-  geom_sf(data = isle_net, aes(fill = landcovername), colour = NA) +
-  scale_fill_manual(values = c("Water" = "#00b4d8",
-                               "Roads" = "#ffffff",
-                               "Other Impervious" = "#e8d1d1",
-                               "Structures" = "#b50000",
-                               "Barren" = "#d2cdc0",
-                               "Tree Canopy" = "#85c77e",
-                               "Scrub/Shrub" = "#dcca8f",
-                               "Herbaceous" = "#fde9aa",
-                               "Tree Canopy over Roads" = "#fbf65d",
-                               "Tree Canopy over Other Impervious" = "#ca9146",
-                               "Tree Canopy over Structures" = "#c8e6f8",
-                               "Emergent Wetlands" = "#64b3d5")) +
-  labs(title = "Land Cover in Isle County") +
-  mapTheme
-```
-
-Questions:
-1.Fishnet size should be different among three counties?
-2.some categories take small proportion of one fishnet cell(category>9), so that these categories can't be joined to fishnet
 
 # DEM
 ```{r}
