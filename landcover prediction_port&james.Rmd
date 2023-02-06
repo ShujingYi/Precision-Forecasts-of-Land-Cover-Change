@@ -144,6 +144,18 @@ plot(port_18_pcnt_imperv)
 mv(port_14_pcnt_imperv)
 mv(port_18_pcnt_imperv)
 ```
+### Changes from 2014-2018
+```{r}
+port_change<-port_18_10_rc["lc"]-port_14_10_rc["lc"]
+port_change_rc <- port_change %>% 
+  mutate(perv_to_imperv = case_when(
+    lc <= 0  ~ 0,
+    lc > 0 ~ 1
+  ))
+port_lc_change<-port_change_rc["perv_to_imperv"]
+mv(port_lc_change)
+```
+
 
 ## James_landcover
 ```{r}
@@ -204,8 +216,15 @@ mv(james_14_pcnt_imperv)
 mv(james_18_pcnt_imperv)
 ```
 
-## Import Climate Data
-### Precipitation
+### Changes from 2014-2018
 ```{r}
-
+james_change<-james_18_10_rc["lc"]-james_14_10_rc["lc"]
+james_change_rc <- james_change %>% 
+  mutate(perv_to_imperv = case_when(
+    lc <= 0  ~ 0,
+    lc > 0 ~ 1
+  ))
+james_lc_change<-james_change_rc["perv_to_imperv"]
+mv(james_lc_change)
 ```
+
