@@ -83,30 +83,31 @@ isle_area <- st_read("Data/boundary/Isle_of_Wight.shp")
 
 ```{r}
 # Read in the raster image
-isle_14 <- read_stars("Data/lc/isle_51093_lc_2014/isle_51093_landcover_2014.tif")
-isle_18 <- read_stars("Data/lc/isle_51093_lc_2018/isle_51093_landcover_2018.tif")
-
+#isle_14 <- read_stars("Data/lc/isle_51093_lc_2014/isle_51093_landcover_2014.tif")
+#isle_18 <- read_stars("Data/lc/isle_51093_lc_2018/isle_51093_landcover_2018.tif")
+isle_14_10 <- read_stars("Data/lc/islelc_14")
+isle_18_10 <- read_stars("Data/lc/islelc_18")
 ```
 
 ```{r}
 
 # Transform the test area object to the same CRS as the raster image
 isle_area <- isle_area %>% 
-  st_transform(crs = st_crs(isle_14))
+  st_transform(crs = st_crs(isle_14_10))
 
 # Resample the raster image to 10x10 cells
-isle_14 <- st_warp(isle_14, cellsize = 10, crs = st_crs(isle_14))
+#isle_14 <- st_warp(isle_14, cellsize = 10, crs = st_crs(isle_14))
 
 # Plot the resampled raster image
 mv(isle_14_10) + mv(isle_area)
 
 # Crop the resampled raster image to the test area
 isle_14_10_crop <- st_crop(isle_14_10, isle_area)
+isle_18_10_crop <- st_crop(isle_18_10, isle_area)
 
 # Plot the cropped raster image
-mv(isle_14_10_crop) + mv(isle_area)
-
-
+plot(isle_14_10_crop) 
+plot(isle_18_10_crop) 
 ```
 
 ```{r}
