@@ -237,6 +237,7 @@ james_lc_change<-james_change_rc["perv_to_imperv"]
 plot(james_lc_change)
 ```
 
+<<<<<<< HEAD:landcover prediction_whole.Rmd
 ## Isle_landcover
 
 ```{r}
@@ -289,3 +290,40 @@ isle_change_rc <- isle_change %>%
 isle_lc_change<-isle_change_rc["perv_to_imperv"]
 plot(isle_lc_change)
 ```
+=======
+
+# DEM + Slope
+
+```{r}
+# Read in the raster image
+dem1 <- read_stars("Data/DEM/USGS_1_n38w077_20170509.tif")
+dem2 <- read_stars("Data/DEM/USGS_1_n37w077_20160315.tif")
+dem <- st_mosaic(dem1, dem2)
+```
+
+```{r}
+dem2 <- st_warp(dem2, crs=st_crs(port_14))
+dem_port <- st_crop (dem2, port_area)
+dem_port <- st_warp(dem_port, port_18_10_crop)
+port_slope<- slope(dem_port)
+
+# Plot the cropped raster image
+mv(port_14_10_crop)+mv(dem_port)+mv(port_slope)
+```
+
+
+```{r}
+dem1 <- st_warp(dem1, crs=st_crs(port_14))
+dem_james <- st_crop (dem1, james_area)
+dem_james <- st_warp(dem_james, james_18_10_crop)
+james_slope<- slope(dem_james)
+
+```
+
+```{r}
+# Plot the cropped raster image
+mv(dem_james)+mv(james_slope)
+```
+
+
+>>>>>>> 12b6bb479c0616a6bf091475ce52043e6fcee41a:landcover prediction_port&james.Rmd
