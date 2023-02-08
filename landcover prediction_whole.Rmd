@@ -327,3 +327,136 @@ mv(dem_james)+mv(james_slope)
 
 
 >>>>>>> 12b6bb479c0616a6bf091475ce52043e6fcee41a:landcover prediction_port&james.Rmd
+
+# Census
+
+```{r}
+options(tigris_use_cache = TRUE)
+# port
+port_tracts14 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2014, state="51", county="Portsmouth", geometry=T, output="wide") %>%
+  st_transform(st_crs(james_14)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
+         ) %>%
+  dplyr::select(-Whites, -GEOID)
+
+port_tracts14[is.na(port_tracts14)]<- 0
+
+port_tracts18 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2018, state="51", county="Portsmouth", geometry=T, output="wide") %>%
+  st_transform(st_crs(james_18)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
+         ) %>%
+  dplyr::select(-Whites, -GEOID)
+port_tracts18[is.na(port_tracts18)]<- 0
+
+# james
+james_tracts14 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2014, state="51", county="James City", geometry=T, output="wide") %>%
+  st_transform(st_crs(james_14)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E,
+         ) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0),
+         ) %>%
+  dplyr::select(-Whites,-GEOID)
+
+james_tracts18 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2018, state="51", county="James City", geometry=T, output="wide") %>%
+  st_transform(st_crs(james_18)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E,
+        ) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
+         ) %>%
+  dplyr::select(-Whites,-GEOID)
+
+
+
+# isle
+isle_tracts14 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2014, state="51", county="Isle of Wight", geometry=T, output="wide") %>%
+  st_transform(st_crs(james_18)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E,
+        ) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
+         ) %>%
+  dplyr::select(-Whites,-GEOID)
+
+isle_tracts18 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2018, state="51", county="Isle of Wight", geometry=T, output="wide") %>%
+  st_transform(st_crs(james_18)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E,
+        ) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
+         ) %>%
+  dplyr::select(-Whites,-GEOID)
+
+```
+
+
+# Change
+```{r}
+port_tract <- st_join(port_tracts14, port_tracts18) %>%
+  mutate(popchange = (TotalPop.y - TotalPop.x)/TotalPop.x,
+         pctwhitechange = pctWhite.y - pctWhite.x,
+         Unitchange = TotalUnit.y - TotalUnit.x,
+         MedHHIncchange = MedHHInc.y - MedHHInc.x)%>%
+  dplyr::select(-ends_with(".x"),-ends_with(".y"))
+
+
+jame_tract <- st_join(james_tracts14, james_tracts18) %>%
+  mutate(popchange = (TotalPop.y - TotalPop.x)/TotalPop.x,
+         pctwhitechange = pctWhite.y - pctWhite.x,
+         Unitchange = TotalUnit.y - TotalUnit.x,
+         MedHHIncchange = MedHHInc.y - MedHHInc.x)%>%
+  dplyr::select(-ends_with(".x"),-ends_with(".y"))
+
+isle_tract <- st_join(isle_tracts14, isle_tracts18) %>%
+  mutate(popchange = (TotalPop.y - TotalPop.x)/TotalPop.x,
+         pctwhitechange = pctWhite.y - pctWhite.x,
+         Unitchange = TotalUnit.y - TotalUnit.x,
+         MedHHIncchange = MedHHInc.y - MedHHInc.x)%>%
+  dplyr::select(-ends_with(".x"),-ends_with(".y"))
+```
+
+# Road
+```{r}
+# Reclassify the road
+port_14_road<- port14 %>% 
+  mutate(road = case_when(
+    port_51740_landcover_2014.tif == 9  ~ 1,
+    port_51740_landcover_2014.tif != 9 ~ 0
+  ))
+```
+
