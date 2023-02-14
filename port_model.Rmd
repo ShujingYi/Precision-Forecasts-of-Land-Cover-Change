@@ -1,0 +1,149 @@
+---
+title: "models"
+author: "Xinge Zhang"
+date: "2023-02-11"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r cars}
+library(tidymodels)
+library(ggplot2)
+tidymodels_prefer()
+
+```
+
+
+```{r pressure, echo=FALSE}
+port_train <- read_csv('~/Github/Precision-Forecasts-of-Land-Cover-Change/port14.csv')
+port_test <- read_csv('~/Github/Precision-Forecasts-of-Land-Cover-Change/port18.csv')
+```
+```{r}
+port_train<- port_train%>%
+  mutate(lc18 = merge(x = port_test, y = port_train, by = c('x','y'), all = TRUE)$lc.x) %>%
+  mutate(lcchange = lc18-lc)
+```
+
+```{r}
+ggplot(port_train, aes(x = lcchange)) + 
+  geom_histogram(bins = 50, col= "white")
+```
+
+
+
+
+```{r}
+## decision tree
+tree_model <- 
+  decision_tree(min_n = 2) %>% 
+  set_engine("rpart") %>% 
+  set_mode("regression")
+
+tree_fit <- 
+  tree_model %>% 
+  fit(lcchange ~ lc + popchange + pctwhitechange + Unitchange + MedHHIncchange +
+        barren+ canopy+road+  other + perm + struct + water+ terrain + slope,
+      data =   port_train)
+
+
+```
+
+
+```{r}
+tree_fit %>% extract_fit_engine()%>% summary()
+```
+
+```{r}
+lm_model <- linear_reg() %>% set_engine("lm")
+lm_fit <- 
+  lm_model %>% 
+ fit(lcchange ~ lc + popchange + pctwhitechange + Unitchange + MedHHIncchange +
+        barren+ canopy+road+  other + perm + struct + water+ terrain + slope,
+      data =   port_train)
+lm_fit %>% extract_fit_engine()%>% summary()
+```
+
+```{r}
+rf_model <- 
+rand_forest(trees = 1000, min_n = 5) %>% 
+  set_engine("ranger") %>% 
+  set_mode("regression") 
+rf_fit <- 
+  rf_model %>% 
+ fit(lcchange ~ lc + popchange + pctwhitechange + Unitchange + MedHHIncchange +
+        barren+ canopy+road+  other + perm + struct + water+ terrain + slope,
+      data =   port_train)
+rf_fit %>% extract_fit_engine()%>% summary()
+```
+```{r}
+library('ggcorrplot')
+library('corrr')
+library("FactoMineR")
+library("factoextra")
+```
+
+```{r}
+port_normalized14 <- scale(port_train[,4: (ncol(port_train) -1)])
+port_normalized18 <- scale(port_test)
+corr_matrix <- cor(port_normalized14)
+ggcorrplot(corr_matrix)
+```
+```{r}
+data.pca <- princomp(corr_matrix)
+summary(data.pca)
+```
+```{r}
+data.pca$loadings[, 1:2]
+```
+
+```{r}
+fviz_eig(data.pca, addlabels = TRUE)
+```
+```{r}
+fviz_pca_var(data.pca, col.var = "cos2",
+            gradient.cols = c("black", "orange", "green"),
+            repel = TRUE)
+```
+
+
+```{r}
+set.seed(123)
+
+# function to compute total within-cluster sum of square 
+wss <- function(k) {
+  kmeans(port_normalized14, k, nstart = 10 )$tot.withinss
+}
+
+# Compute and plot wss for k = 1 to k = 15
+k.values <- 1:15
+
+# extract wss for 2-15 clusters
+wss_values <- map_dbl(k.values, wss)
+
+plot(k.values, wss_values,
+       type="b", pch = 19, frame = FALSE, 
+       xlab="Number of clusters K",
+       ylab="Total within-clusters sum of squares")
+```
+
+
+```{r}
+km.res <- kmeans(port_normalized14, 9, nstart = 25)
+print(km.res)
+```
+```{r}
+aggregate(port_normalized14, by=list(cluster=km.res$cluster), mean)
+```
+```{r}
+dd <- cbind(port_normalized14, cluster = km.res$cluster)
+head(dd)
+```
+```{r}
+fviz_cluster(km.res, data = port_normalized14, labelsize = 0, repel = TRUE )
+```
+

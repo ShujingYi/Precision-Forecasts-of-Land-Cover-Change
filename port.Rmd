@@ -1,0 +1,387 @@
+---
+title: "port"
+author: "Xinge Zhang"
+date: "2023-02-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R setup
+```{r setup, include=FALSE}
+library(tidyverse)
+library(sf)
+library(raster)
+library(knitr)
+library(kableExtra)
+library(tidycensus)
+library(tigris)
+library(FNN)
+#library(QuantPsyc) # JE Note: in R 4.1, QuantPsyc package not available.
+library(caret)
+library(yardstick)
+library(pscl)
+library(plotROC) 
+library(ggrepel)
+library(pROC)
+library(grid)
+library(gridExtra)
+library(viridis)
+library(igraph)
+library(exactextractr)
+library(geojsonsf)
+library(stars)
+library(starsExtra)
+library(mapview)
+library(glue)
+library(tidymodels)
+plotTheme <- theme(
+  plot.title =element_text(size=12),
+  plot.subtitle = element_text(size=8),
+  plot.caption = element_text(size = 6),
+  axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+  axis.text.y = element_text(size = 10),
+  axis.title.y = element_text(size = 10),
+  # Set the entire chart region to blank
+  panel.background=element_blank(),
+  plot.background=element_blank(),
+  #panel.border=element_rect(colour="#F0F0F0"),
+  # Format the grid
+  panel.grid.major=element_line(colour="#D0D0D0",size=.75),
+  axis.ticks=element_blank())
+
+mapTheme <- theme(plot.title =element_text(size=12),
+                  plot.subtitle = element_text(size=8),
+                  plot.caption = element_text(size = 6),
+                  axis.line=element_blank(),
+                  axis.text.x=element_blank(),
+                  axis.text.y=element_blank(),
+                  axis.ticks=element_blank(),
+                  axis.title.x=element_blank(),
+                  axis.title.y=element_blank(),
+                  panel.background=element_blank(),
+                  panel.border=element_blank(),
+                  panel.grid.major=element_line(colour = 'transparent'),
+                  panel.grid.minor=element_blank(),
+                  legend.direction = "vertical", 
+                  legend.position = "right",
+                  plot.margin = margin(1, 1, 1, 1, 'cm'),
+                  legend.key.height = unit(1, "cm"), legend.key.width = unit(0.2, "cm"))
+
+palette2 <- c("#41b6c4","#253494")
+palette4 <- c("#a1dab4","#41b6c4","#2c7fb8","#253494")
+palette5 <- c("#ffffcc","#a1dab4","#41b6c4","#2c7fb8","#253494")
+palette10 <- c("#f7fcf0","#e0f3db","#ccebc5","#a8ddb5","#7bccc4",
+               "#4eb3d3","#2b8cbe","#0868ac","#084081","#f7fcf0")
+
+mv<- mapview
+```
+
+
+## Portsmouth_landcover
+```{r}
+port_14 <- read_stars("Data/lc/port_51740_lc_2014/port_51740_landcover_2014.tif")
+port_18 <- read_stars("Data/lc/port_51740_lc_2018/port_51740_landcover_2018.tif")
+port_area <- st_read("Data/boundary/portsmouth.shp")
+# Transform the test area object to the same CRS as the raster image
+port_area <- port_area %>% 
+  st_transform(crs = st_crs(port_14))
+
+# Resample the raster image to 10x10 cells
+port_14_10 <- st_warp(port_14, cellsize = 10, crs = st_crs(port_14))
+port_18_10 <- st_warp(port_18, cellsize = 10, crs = st_crs(port_18))
+
+# Crop the resampled raster image to the test area
+port_14_10_crop <- st_crop(port_14_10, port_area)
+port_18_10_crop <- st_crop(port_18_10, port_area)
+```
+
+
+```{r}
+# Reclassify the cropped raster image
+port_14_10_rc <- port_14_10_crop %>% 
+  mutate(lc = case_when(
+    port_51740_landcover_2014.tif < 6  ~ 0,
+    port_51740_landcover_2014.tif >= 6 ~ 1
+  ))
+port_18_10_rc <- port_18_10_crop %>% 
+  mutate(lc = case_when(
+    port_51740_landcover_2018.tif < 6  ~ 0,
+    port_51740_landcover_2018.tif >= 6 ~ 1
+  ))
+
+```
+
+```{r}
+
+# Calculate the mean value for a 3x3 cell neighborhood
+port_14_pcnt_imperv = focal2(port_14_10_rc["lc"], matrix(1, 3, 3), "mean")
+port_18_pcnt_imperv = focal2(port_18_10_rc["lc"], matrix(1, 3, 3), "mean")
+
+```
+
+```{r}
+#remove
+rm(port_14_10,port_18_10,port_14,port_18)
+```
+
+
+## load census
+
+```{r}
+options(tigris_use_cache = TRUE)
+# port
+port_tracts14 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2014, state="51", county="Portsmouth", geometry=T, output="wide") %>%
+  st_transform(st_crs(port_14_10_rc)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
+         ) %>%
+  dplyr::select(-Whites, -GEOID)
+
+port_tracts14[is.na(port_tracts14)]<- 0
+
+port_tracts18 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2018, state="51", county="Portsmouth", geometry=T, output="wide") %>%
+  st_transform(st_crs(port_18_10_rc)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
+         ) %>%
+  dplyr::select(-Whites, -GEOID)
+port_tracts18[is.na(port_tracts18)]<- 0
+
+port_tract <- st_join(port_tracts14, port_tracts18) %>%
+  mutate(popchange = (TotalPop.y - TotalPop.x)/TotalPop.x,
+         pctwhitechange = pctWhite.y - pctWhite.x,
+         Unitchange = TotalUnit.y - TotalUnit.x,
+         MedHHIncchange = MedHHInc.y - MedHHInc.x)%>%
+  dplyr::select(-ends_with(".x"),-ends_with(".y"))
+```
+
+
+
+# road
+
+```{r}
+# Reclassify the road
+port_14_road<- port_14_10_crop %>% 
+  mutate(road = case_when(
+    port_51740_landcover_2014.tif == 9  ~ 1,
+    port_51740_landcover_2014.tif != 9 ~ 0
+  ))
+
+port_18_road <- port_18_10_crop%>% 
+  mutate(road = case_when(
+    port_51740_landcover_2018.tif == 9  ~ 1,
+    port_51740_landcover_2018.tif != 9 ~ 0
+  ))
+
+x<- port_14_road["road"]
+mv(x)
+```
+
+```{r}
+road_14 <- focal2(port_14_road["road"], matrix(1, 3, 3), "mean")
+road_14 <- focal2(road_14["road"], matrix(1, 3, 3), "mean")
+road_14 <- focal2(road_14["road"], matrix(1, 3, 3), "mean")
+road_18 <- focal2(port_18_road["road"], matrix(1, 3, 3), "mean")
+road_18 <- focal2(road_18["road"], matrix(1, 3, 3), "mean")
+road_18 <- focal2(road_18["road"], matrix(1, 3, 3), "mean")
+mv(road_14)
+```
+
+```{r}
+port_14_canopy<- port_14_10_crop %>% 
+  mutate(canopy = case_when(
+    port_51740_landcover_2014.tif == 3  ~ 1,   #Tree Canopy
+    port_51740_landcover_2014.tif == 10 ~ 0.5, #Tree Canopy over Structure
+    port_51740_landcover_2014.tif == 11 ~ 0.5, #Tree Canopy over Other
+    port_51740_landcover_2014.tif == 12 ~ 0.5, #Tree Canopy over road
+    !(port_51740_landcover_2014.tif %in% c(3,10,11,12)) ~ 0
+    
+  ))
+
+port_18_canopy <- port_18_10_crop%>% 
+  mutate(canopy = case_when(
+    port_51740_landcover_2018.tif == 3  ~ 1,   #Tree Canopy
+    port_51740_landcover_2018.tif == 10 ~ 0.5, #Tree Canopy over Structure
+    port_51740_landcover_2018.tif == 11 ~ 0.5, #Tree Canopy over Other
+    port_51740_landcover_2018.tif == 12 ~ 0.5, #Tree Canopy over road
+    !(port_51740_landcover_2018.tif %in% c(3,10,11,12)) ~ 0
+  ))
+
+```
+
+
+
+```{r}
+port_14_permeable<- port_14_10_crop %>% 
+  mutate(perm = case_when(
+    port_51740_landcover_2014.tif == 2  ~ 0.3,   #shrub
+    port_51740_landcover_2014.tif == 4 ~ 0.3, #herb
+    port_51740_landcover_2014.tif == 5 ~ 0.4, #wetland
+    !(port_51740_landcover_2014.tif %in% c(2,4,5)) ~ 0
+  ))
+
+port_18_permeable<- port_18_10_crop %>% 
+  mutate(perm = case_when(
+    port_51740_landcover_2018.tif == 2  ~ 0.3,   #shrub
+    port_51740_landcover_2018.tif == 4 ~ 0.3, #herb
+    port_51740_landcover_2018.tif == 5 ~ 0.4, #wetland
+    !(port_51740_landcover_2018.tif %in% c(2,4,5)) ~ 0
+  ))
+
+
+```
+
+```{r}
+port_14_water<- port_14_10_crop %>% 
+  mutate(water = case_when(
+    port_51740_landcover_2014.tif == 1  ~ 1,
+    port_51740_landcover_2014.tif != 1 ~ 0
+  ))
+
+port_18_water <- port_18_10_crop%>% 
+  mutate(water = case_when(
+    port_51740_landcover_2018.tif == 1  ~ 1,
+    port_51740_landcover_2018.tif != 1 ~ 0
+  ))
+
+```
+
+
+```{r}
+port_14_barren<- port_14_10_crop %>% 
+  mutate(barren = case_when(
+    port_51740_landcover_2014.tif == 6  ~ 1,
+    port_51740_landcover_2014.tif != 6 ~ 0
+  ))
+
+port_18_barren <- port_18_10_crop%>% 
+  mutate(barren = case_when(
+    port_51740_landcover_2018.tif == 6  ~ 1,
+    port_51740_landcover_2018.tif != 6 ~ 0
+  ))
+```
+
+```{r}
+port_14_structure<- port_14_10_crop %>% 
+  mutate(struct= case_when(
+    port_51740_landcover_2014.tif == 7  ~ 1,
+    port_51740_landcover_2014.tif != 7 ~ 0
+  ))
+
+port_18_structure<- port_18_10_crop%>% 
+  mutate(struct = case_when(
+    port_51740_landcover_2018.tif == 7  ~ 1,
+    port_51740_landcover_2018.tif != 7 ~ 0
+  ))
+```
+
+```{r}
+port_14_other<- port_14_10_crop %>% 
+  mutate(other= case_when(
+    port_51740_landcover_2014.tif == 8  ~ 1,
+    port_51740_landcover_2014.tif != 8 ~ 0
+  ))
+
+port_18_other<- port_18_10_crop%>% 
+  mutate(other = case_when(
+    port_51740_landcover_2018.tif == 8 ~ 1,
+    port_51740_landcover_2018.tif != 8 ~ 0
+  ))
+```
+
+```{r}
+# Read in the raster image
+dem1 <- read_stars("Data/DEM/USGS_1_n38w077_20170509.tif")
+dem2 <- read_stars("Data/DEM/USGS_1_n37w077_20160315.tif")
+dem <- st_mosaic(dem1, dem2)
+```
+
+```{r}
+dem2 <- st_warp(dem2, crs=st_crs(port_14_10_rc))
+dem_port <- st_crop (dem2, port_area)
+dem_port <- st_warp(dem_port, port_14_10_crop)
+port_slope<- slope(dem_port)
+
+```
+
+```{r}
+rm(dem1,dem2,dem)
+```
+
+
+```{r}
+port14 <- 
+  st_join(port_14_10_rc,port_tract) %>%
+  st_join(.,port_14_barren)%>%
+  st_join(.,port_14_canopy)%>%
+  st_join(.,port_14_road)%>%
+  st_join(.,port_14_other)%>%
+  st_join(.,port_14_pcnt_imperv)%>%
+  st_join(.,port_14_permeable)%>%
+  st_join(.,port_14_structure)%>%
+  st_join(.,port_14_water)%>%
+  st_join(.,dem_port)%>%
+  st_join(.,port_slope) %>%
+  st_join(.,port_14_pcnt_imperv)
+  
+port18 <- 
+  st_join(port_18_10_rc,port_tract) %>%
+  st_join(.,port_18_barren)%>%
+  st_join(.,port_18_canopy)%>%
+  st_join(.,port_18_road)%>%
+  st_join(.,port_18_other)%>%
+  st_join(.,port_18_pcnt_imperv)%>%
+  st_join(.,port_18_permeable)%>%
+  st_join(.,port_18_structure)%>%
+  st_join(.,port_18_water)%>%
+  st_join(.,dem_port)%>%
+  st_join(.,port_slope)%>%
+  st_join(.,port_18_pcnt_imperv)
+```
+
+
+
+```{r}
+write_stars(port14,'port14.tif')
+write_stars(port18,'port18.tif')
+
+```
+
+```{r}
+port14_df <- 
+  as.data.frame(port14) %>% 
+  na.omit() %>%
+  rename(originallc = port_51740_landcover_2014.tif,
+        terrain = USGS_1_n37w077_20160315.tif )
+port18_df <- 
+  as.data.frame(port18) %>% 
+  na.omit()%>%
+  rename(originallc = port_51740_landcover_2018.tif,
+          terrain = USGS_1_n37w077_20160315.tif)
+
+port14_df <- port14_df %>%
+  mutate(lc18 = merge(x = port18_df, y = port14_df, by = c('x','y'), all = TRUE)['lc.x'])%>%
+  mutate(lcchange = lc18-lc)
+```
+
+```{r}
+write.csv(port14_df, 'port14.csv')
+write.csv(port18_df, 'port18.csv')
+```
+
+
