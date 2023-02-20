@@ -314,6 +314,26 @@ mv(port_14_10_crop)+mv(dem_port)+mv(port_slope)
 plot(dem_port)
 plot(port_slope)
 ```
+```{r}
+elev_df <- as.data.frame(dem_port, xy = TRUE)
+slope_df <- as.data.frame(port_slope, xy = TRUE)
+
+```
+
+
+```{r}
+dat %>%
+  dplyr::select(distance_highways,lagDevelopment,lc_change) %>%
+  gather(Variable, Value, -lc_change, -geometry) %>%
+  ggplot(., aes(lc_change, Value, fill=lc_change)) + 
+    geom_bar(position = "dodge", stat = "summary", fun.y = "mean") +
+    facet_wrap(~Variable) +
+    scale_fill_manual(values = palette2,
+                      labels=c("No Change","New Development"),
+                      name="") +
+    labs(title="New Development as a Function of the Continuous Variables") +
+    plotTheme 
+```
 
 
 ```{r}
@@ -332,101 +352,7 @@ mv(dem_james)+mv(james_slope)
 
 >>>>>>> 12b6bb479c0616a6bf091475ce52043e6fcee41a:landcover prediction_port&james.Rmd
 
-# Census
 
-```{r}
-options(tigris_use_cache = TRUE)
-# port
-port_tracts14 <- 
-  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
-          year=2014, state="51", county="Portsmouth", geometry=T, output="wide") %>%
-  st_transform(st_crs(port_14)) %>%
-  rename(TotalPop = B01003_001E, 
-         Whites = B02001_002E,
-         MedHHInc = B19013_001E,
-         TotalUnit = B25002_001E) %>%
-dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
-  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
-         ) %>%
-  dplyr::select(-Whites, -GEOID)
-
-port_tracts14[is.na(port_tracts14)]<- 0
-
-port_tracts18 <- 
-  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
-          year=2018, state="51", county="Portsmouth", geometry=T, output="wide") %>%
-  st_transform(st_crs(port_18)) %>%
-  rename(TotalPop = B01003_001E, 
-         Whites = B02001_002E,
-         MedHHInc = B19013_001E,
-         TotalUnit = B25002_001E) %>%
-dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
-  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
-         ) %>%
-  dplyr::select(-Whites, -GEOID)
-port_tracts18[is.na(port_tracts18)]<- 0
-
-# james
-james_tracts14 <- 
-  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
-          year=2014, state="51", county="James City", geometry=T, output="wide") %>%
-  st_transform(st_crs(james_14)) %>%
-  rename(TotalPop = B01003_001E, 
-         Whites = B02001_002E,
-         MedHHInc = B19013_001E,
-         TotalUnit = B25002_001E,
-         ) %>%
-dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
-  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0),
-         ) %>%
-  dplyr::select(-Whites,-GEOID)
-
-james_tracts18 <- 
-  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
-          year=2018, state="51", county="James City", geometry=T, output="wide") %>%
-  st_transform(st_crs(james_18)) %>%
-  rename(TotalPop = B01003_001E, 
-         Whites = B02001_002E,
-         MedHHInc = B19013_001E,
-         TotalUnit = B25002_001E,
-        ) %>%
-dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
-  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
-         ) %>%
-  dplyr::select(-Whites,-GEOID)
-
-
-
-# isle
-isle_tracts14 <- 
-  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
-          year=2014, state="51", county="Isle of Wight", geometry=T, output="wide") %>%
-  st_transform(st_crs(isle_14)) %>%
-  rename(TotalPop = B01003_001E, 
-         Whites = B02001_002E,
-         MedHHInc = B19013_001E,
-         TotalUnit = B25002_001E,
-        ) %>%
-dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
-  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
-         ) %>%
-  dplyr::select(-Whites,-GEOID)
-
-isle_tracts18 <- 
-  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
-          year=2018, state="51", county="Isle of Wight", geometry=T, output="wide") %>%
-  st_transform(st_crs(isle_18)) %>%
-  rename(TotalPop = B01003_001E, 
-         Whites = B02001_002E,
-         MedHHInc = B19013_001E,
-         TotalUnit = B25002_001E,
-        ) %>%
-dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
-  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
-         ) %>%
-  dplyr::select(-Whites,-GEOID)
-
-```
 
 
 # Change
@@ -549,3 +475,445 @@ hist(port_14_wetland_focal$wetland)
 plot(port_14_wetland_focal)
 ```
 
+
+
+# Census
+
+```{r}
+options(tigris_use_cache = TRUE)
+# port
+port_tracts14 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2014, state="51", county="Portsmouth", geometry=T, output="wide") %>%
+  st_transform(st_crs(port_14)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0),
+         year = "2014"
+         ) %>%
+  dplyr::select(-Whites, -GEOID)
+
+port_tracts14[is.na(port_tracts14)]<- 0
+
+port_tracts18 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2018, state="51", county="Portsmouth", geometry=T, output="wide") %>%
+  st_transform(st_crs(port_18)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0),
+         year = "2018"
+         ) %>%
+  dplyr::select(-Whites, -GEOID)
+port_tracts18[is.na(port_tracts18)]<- 0
+
+# james
+james_tracts14 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2014, state="51", county="James City", geometry=T, output="wide") %>%
+  st_transform(st_crs(james_14)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E,
+         ) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0),
+         year = "2014"
+         ) %>%
+  dplyr::select(-Whites,-GEOID)
+
+james_tracts18 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2018, state="51", county="James City", geometry=T, output="wide") %>%
+  st_transform(st_crs(james_18)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E,
+        ) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0),
+         year = "2018"
+         ) %>%
+  dplyr::select(-Whites,-GEOID)
+
+
+
+# isle
+isle_tracts14 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2014, state="51", county="Isle of Wight", geometry=T, output="wide") %>%
+  st_transform(st_crs(isle_14_10)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E,
+        ) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0),
+         year = "2014"
+         ) %>%
+  dplyr::select(-Whites,-GEOID)
+
+isle_tracts18 <- 
+  get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
+          year=2018, state="51", county="Isle of Wight", geometry=T, output="wide") %>%
+  st_transform(st_crs(isle_18_10)) %>%
+  rename(TotalPop = B01003_001E, 
+         Whites = B02001_002E,
+         MedHHInc = B19013_001E,
+         TotalUnit = B25002_001E,
+        ) %>%
+dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
+  mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0),
+         year = "2018"
+         ) %>%
+  dplyr::select(-Whites,-GEOID)
+
+```
+```{r}
+options(scipen=999)
+options(tigris_class = "sf")
+
+root.dir = "https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/DATA/"
+source("https://raw.githubusercontent.com/urbanSpatial/Public-Policy-Analytics-Landing/master/functions.r")
+
+
+palette5 <- c("#f0f9e8","#bae4bc","#7bccc4","#43a2ca","#0868ac")
+```
+
+## Portsmouth
+
+```{r}
+port_block <- rbind(port_tracts14,port_tracts18)
+```
+
+```{r}
+# extract points
+#pnt = st_sample(st_as_sfc(st_bbox(port_14_pcnt_imperv)), 1000)
+
+#port_imprevious_pt14 <- st_extract(port_14_pcnt_imperv, pnt) %>% 
+ # st_as_sf()%>%
+#  st_transform(st_crs(isle_14_10))
+```
+
+
+
+```{r}
+#extract to census block
+Port14_mean_imperv <- aggregate(!is.na(port_14_10_rc), port_tracts14, FUN = mean) %>% 
+  st_as_sf()%>% 
+  mutate (year = "2014")
+```
+
+```{r}
+Port18_mean_imperv <- aggregate(!is.na(port_18_10_rc), port_tracts18, FUN = mean) %>% 
+  st_as_sf()%>% 
+  mutate (year = "2018")
+```
+
+```{r}
+port14_imperv_block <- Port14_mean_imperv  %>% 
+filter(lc == 1) 
+
+port18_imperv_block <- Port18_mean_imperv %>% 
+filter(lc == 1)
+
+```
+
+
+```{r}
+ggplot() +
+  geom_sf(data=port_block , aes(fill = q5(TotalPop) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(port18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(port_block , "TotalPop"),
+                    name = "Total Population\n(Quintile Breaks)")+
+   labs(title = "Total Population in Impervious Block Groups", 
+        subtitle = "Portsmouth; 2014-2018") +
+  mapTheme()
+```
+```{r}
+ggplot() +
+  geom_sf(data=port_block , aes(fill = q5(pctWhite) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(port18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(port_block , "pctWhite"),
+                    name = "Percentage of White\n(Quintile Breaks)")+
+   labs(title = "Percentage of White in Impervious Block Groups", 
+        subtitle = "Portsmouth; 2014-2018") +
+  mapTheme()
+```
+```{r}
+ggplot() +
+  geom_sf(data=port_block , aes(fill = q5(MedHHInc) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(port18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(port_block , "MedHHInc"),
+                    name = "Medium Income\n(Quintile Breaks)")+
+   labs(title = "Medium Income in Impervious Block Groups", 
+        subtitle = "Portsmouth; 2014-2018") +
+  mapTheme()
+```
+
+```{r}
+ggplot() +
+  geom_sf(data=port_block , aes(fill = q5(TotalUnit) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(port18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(port_block , "TotalUnit"),
+                    name = "Housing units\n(Quintile Breaks)")+
+   labs(title = "Housing units in Impervious Block Groups", 
+        subtitle = "Portsmouth; 2014-2018") +
+  mapTheme()
+```
+
+
+```{r}
+Port14_mean_imperv <- Port14_mean_imperv[c(2,3,4)]
+Port18_mean_imperv <- Port18_mean_imperv[c(2,3,4)]
+imperv_all <- rbind(Port14_mean_imperv, Port18_mean_imperv)
+
+port_block_all <- cbind(port_block,imperv_all) %>%
+  mutate(impervious = ifelse(lc == 1, "impervious", "pervious"),
+         ) 
+  
+```
+
+```{r}
+port_block.Summary <- 
+  st_drop_geometry(port_block_all) %>%
+  group_by(year, impervious) %>%
+  drop_na() %>%
+  summarize(Income = mean(MedHHInc, na.rm = T),
+            Population = mean(TotalPop, na.rm = T),
+            Percent_White = mean(pctWhite, na.rm = T),
+            Housing_Units = mean(TotalUnit, na.rm = T))
+
+port_block.Summary %>%
+  gather(Variable, Value, -year, -impervious) %>%
+  ggplot(aes(year, Value, fill = impervious)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Variable, scales = "free", ncol=5) +
+  scale_fill_manual(values = c("#bae4bc", "#0868ac")) +
+  labs(title = "Indicator differences across time and space", caption = "Figure 9") +
+  plotTheme() + theme(legend.position="bottom")
+```
+
+## James City
+
+```{r}
+james_block <- rbind(james_tracts14,james_tracts18)
+```
+
+```{r}
+#extract to census block
+james14_mean_imperv <- aggregate(!is.na(james_14_10_rc), james_tracts14, FUN = mean) %>% 
+  st_as_sf()%>% 
+  mutate (year = "2014")
+james18_mean_imperv <- aggregate(!is.na(james_18_10_rc), james_tracts18, FUN = mean) %>% 
+  st_as_sf()%>% 
+  mutate (year = "2018")
+```
+
+```{r}
+james14_imperv_block <- james14_mean_imperv  %>% 
+filter(lc == 1) 
+
+james18_imperv_block <- james18_mean_imperv %>% 
+filter(lc == 1)
+
+```
+
+
+```{r}
+ggplot() +
+  geom_sf(data=james_block , aes(fill = q5(TotalPop) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(james18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(james_block , "TotalPop"),
+                    name = "Total Population\n(Quintile Breaks)")+
+   labs(title = "Total Population in Impervious Block Groups", 
+        subtitle = "James City; 2014-2018") +
+  mapTheme()
+
+ggplot() +
+  geom_sf(data=james_block , aes(fill = q5(pctWhite) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(james18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(james_block , "pctWhite"),
+                    name = "Percentage of White\n(Quintile Breaks)")+
+   labs(title = "Percentage of White in Impervious Block Groups", 
+        subtitle = "James City; 2014-2018") +
+  mapTheme()
+
+ggplot() +
+  geom_sf(data=james_block , aes(fill = q5(MedHHInc) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(james18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(james_block , "MedHHInc"),
+                    name = "Medium Income\n(Quintile Breaks)")+
+   labs(title = "Medium Income in Impervious Block Groups", 
+        subtitle = "James City; 2014-2018") +
+  mapTheme()
+
+ggplot() +
+  geom_sf(data=james_block , aes(fill = q5(TotalUnit) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(james18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(james_block , "TotalUnit"),
+                    name = "Housing units\n(Quintile Breaks)")+
+   labs(title = "Housing units in Impervious Block Groups", 
+        subtitle = "James City; 2014-2018") +
+  mapTheme()
+```
+
+```{r}
+james14_mean_imperv <- james14_mean_imperv[c(2,3,4)]
+james18_mean_imperv <- james18_mean_imperv[c(2,3,4)]
+imperv_all <- rbind(james14_mean_imperv, james18_mean_imperv)
+
+james_block_all <- cbind(james_block,imperv_all) %>%
+  mutate(impervious = ifelse(lc == 1, "impervious", "pervious"),
+         ) 
+  
+```
+
+```{r}
+james_block.Summary <- 
+  st_drop_geometry(james_block_all) %>%
+  group_by(year, impervious) %>%
+  drop_na() %>%
+  summarize(Income = mean(MedHHInc, na.rm = T),
+            Population = mean(TotalPop, na.rm = T),
+            Percent_White = mean(pctWhite, na.rm = T),
+            Housing_Units = mean(TotalUnit, na.rm = T))
+
+james_block.Summary %>%
+  gather(Variable, Value, -year, -impervious) %>%
+  ggplot(aes(year, Value, fill = impervious)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Variable, scales = "free", ncol=5) +
+  scale_fill_manual(values = c("#bae4bc", "#0868ac")) +
+  labs(title = "Indicator differences across time and space", caption = "Figure 9") +
+  plotTheme() + theme(legend.position="bottom")
+```
+
+## Isle of Wight
+
+
+```{r}
+isle_block <- rbind(isle_tracts14,isle_tracts18)
+```
+
+```{r}
+#extract to census block
+isle14_mean_imperv <- aggregate(!is.na(isle_14_10_rc), isle_tracts14, FUN = mean) %>% 
+  st_as_sf()%>% 
+  mutate (year = "2014")
+isle18_mean_imperv <- aggregate(!is.na(isle_18_10_rc), isle_tracts18, FUN = mean) %>% 
+  st_as_sf()%>% 
+  mutate (year = "2018")
+```
+
+```{r}
+isle14_imperv_block <- isle14_mean_imperv  %>% 
+filter(lc == 1) 
+
+isle18_imperv_block <- isle18_mean_imperv %>% 
+filter(lc == 1)
+
+```
+
+
+```{r}
+ggplot() +
+  geom_sf(data=isle_block , aes(fill = q5(TotalPop) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(isle18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(isle_block , "TotalPop"),
+                    name = "Total Population\n(Quintile Breaks)")+
+   labs(title = "Total Population in Impervious Block Groups", 
+        subtitle = "Isle of Wight; 2014-2018") +
+  mapTheme()
+
+ggplot() +
+  geom_sf(data=isle_block , aes(fill = q5(pctWhite) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(isle18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(isle_block , "pctWhite"),
+                    name = "Percentage of White\n(Quintile Breaks)")+
+   labs(title = "Percentage of White in Impervious Block Groups", 
+        subtitle = "Isle of Wight; 2014-2018") +
+  mapTheme()
+
+ggplot() +
+  geom_sf(data=isle_block , aes(fill = q5(MedHHInc) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(isle18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(isle_block , "MedHHInc"),
+                    name = "Medium Income\n(Quintile Breaks)")+
+   labs(title = "Medium Income in Impervious Block Groups", 
+        subtitle = "Isle of Wight; 2014-2018") +
+  mapTheme()
+
+ggplot() +
+  geom_sf(data=isle_block , aes(fill = q5(TotalUnit) ),color ="grey80") +
+   facet_wrap(~year) +
+   geom_sf(data=st_union(isle18_imperv_block),fill = "transparent", color = "grey10",size= 1)+
+  scale_fill_manual(values = palette5,
+                    labels = qBr(isle_block , "TotalUnit"),
+                    name = "Housing units\n(Quintile Breaks)")+
+   labs(title = "Housing units in Impervious Block Groups", 
+        subtitle = "Isle of Wight; 2014-2018") +
+  mapTheme()
+```
+
+```{r}
+isle14_mean_imperv <- isle14_mean_imperv[c(2,3,4)]
+isle18_mean_imperv <- isle18_mean_imperv[c(2,3,4)]
+imperv_all <- rbind(isle14_mean_imperv, isle18_mean_imperv)
+
+isle_block_all <- cbind(isle_block,imperv_all) %>%
+  mutate(impervious = ifelse(lc == 1, "impervious", "pervious"),
+         ) 
+  
+```
+
+```{r}
+isle_block.Summary <- 
+  st_drop_geometry(isle_block_all) %>%
+  group_by(year, impervious) %>%
+  drop_na() %>%
+  summarize(Income = mean(MedHHInc, na.rm = T),
+            Population = mean(TotalPop, na.rm = T),
+            Percent_White = mean(pctWhite, na.rm = T),
+            Housing_Units = mean(TotalUnit, na.rm = T))
+
+isle_block.Summary %>%
+  gather(Variable, Value, -year, -impervious) %>%
+  ggplot(aes(year, Value, fill = impervious)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~Variable, scales = "free", ncol=5) +
+  scale_fill_manual(values = c("#bae4bc", "#0868ac")) +
+  labs(title = "Indicator differences across time and space", caption = "Figure 9") +
+  plotTheme() + theme(legend.position="bottom")
+```
