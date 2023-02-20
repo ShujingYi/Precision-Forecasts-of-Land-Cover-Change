@@ -15,7 +15,20 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidymodels)
 library(ggplot2)
 tidymodels_prefer()
-
+plotTheme <- theme(
+  plot.title =element_text(size=12),
+  plot.subtitle = element_text(size=8),
+  plot.caption = element_text(size = 6),
+  axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+  axis.text.y = element_text(size = 10),
+  axis.title.y = element_text(size = 10),
+  # Set the entire chart region to blank
+  panel.background=element_blank(),
+  plot.background=element_blank(),
+  #panel.border=element_rect(colour="#F0F0F0"),
+  # Format the grid
+  panel.grid.major=element_line(colour="#D0D0D0",size=.75),
+  axis.ticks=element_blank())
 ```
 
 
@@ -27,6 +40,11 @@ port_test <- read_csv('~/Github/Precision-Forecasts-of-Land-Cover-Change/port18.
 port_train<- port_train%>%
   mutate(lc18 = merge(x = port_test, y = port_train, by = c('x','y'), all = TRUE)$lc.x) %>%
   mutate(lcchange = lc18-lc)
+```
+
+```{r}
+ggplot(port_train, aes(x = popchange)) + 
+  geom_histogram(bins = 50, col= "white")
 ```
 
 ```{r}
@@ -116,7 +134,7 @@ set.seed(123)
 
 # function to compute total within-cluster sum of square 
 wss <- function(k) {
-  kmeans(port_normalized14, k, nstart = 10 )$tot.withinss
+  kmeans(port_normalized14[], k, nstart = 10 )$tot.withinss
 }
 
 # Compute and plot wss for k = 1 to k = 15

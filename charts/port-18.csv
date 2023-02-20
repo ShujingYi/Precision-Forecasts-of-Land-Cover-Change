@@ -1,0 +1,10 @@
+landcover,Sum of Field
+Barren,0
+Herbaceous,41
+Other Impervious,38
+Roads,2
+Structures,6
+Tree Canopy,7
+Tree Canopy over Other Impervious,3
+Tree Canopy over Structures,1
+Water,0

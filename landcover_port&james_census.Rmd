@@ -1,0 +1,185 @@
+---
+title: "port&james"
+author: "Yuewen Dai"
+date: "2023-02-05"
+output: html_document
+---
+
+# R setup
+```{r setup, include=FALSE}
+library(tidyverse)
+library(sf)
+library(raster)
+library(knitr)
+library(kableExtra)
+library(tidycensus)
+library(tigris)
+library(FNN)
+#library(QuantPsyc) # JE Note: in R 4.1, QuantPsyc package not available.
+library(caret)
+library(yardstick)
+library(pscl)
+library(plotROC) 
+library(ggrepel)
+library(pROC)
+library(grid)
+library(gridExtra)
+library(viridis)
+library(igraph)
+library(exactextractr)
+library(geojsonsf)
+library(stars)
+library(starsExtra)
+library(mapview)
+library(glue)
+
+plotTheme <- theme(
+  plot.title =element_text(size=12),
+  plot.subtitle = element_text(size=8),
+  plot.caption = element_text(size = 6),
+  axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+  axis.text.y = element_text(size = 10),
+  axis.title.y = element_text(size = 10),
+  # Set the entire chart region to blank
+  panel.background=element_blank(),
+  plot.background=element_blank(),
+  #panel.border=element_rect(colour="#F0F0F0"),
+  # Format the grid
+  panel.grid.major=element_line(colour="#D0D0D0",size=.75),
+  axis.ticks=element_blank())
+
+mapTheme <- theme(plot.title =element_text(size=12),
+                  plot.subtitle = element_text(size=8),
+                  plot.caption = element_text(size = 6),
+                  axis.line=element_blank(),
+                  axis.text.x=element_blank(),
+                  axis.text.y=element_blank(),
+                  axis.ticks=element_blank(),
+                  axis.title.x=element_blank(),
+                  axis.title.y=element_blank(),
+                  panel.background=element_blank(),
+                  panel.border=element_blank(),
+                  panel.grid.major=element_line(colour = 'transparent'),
+                  panel.grid.minor=element_blank(),
+                  legend.direction = "vertical", 
+                  legend.position = "right",
+                  plot.margin = margin(1, 1, 1, 1, 'cm'),
+                  legend.key.height = unit(1, "cm"), legend.key.width = unit(0.2, "cm"))
+
+palette2 <- c("#41b6c4","#253494")
+palette4 <- c("#a1dab4","#41b6c4","#2c7fb8","#253494")
+palette5 <- c("#ffffcc","#a1dab4","#41b6c4","#2c7fb8","#253494")
+palette10 <- c("#f7fcf0","#e0f3db","#ccebc5","#a8ddb5","#7bccc4",
+               "#4eb3d3","#2b8cbe","#0868ac","#084081","#f7fcf0")
+
+mv<- mapview
+```
+
+```{r}
+port_14 <- read_stars("Data/lc/port_51740_lc_2014/port_51740_landcover_2014.tif")
+port_18 <- read_stars("Data/lc/port_51740_lc_2018/port_51740_landcover_2018.tif")
+james_14 <- read_stars("Data/lc/jame_51095_lc_2014/jame_51095_landcover_2014.tif")
+james_18 <- read_stars("Data/lc/jame_51095_lc_2018/jame_51095_landcover_2018.tif")
+```
+
+```{r}
+port_area <- st_read("Data/boundary/portsmouth.shp")
+james_area <- st_read("Data/boundary/James.shp")
+```
+## Portsmouth_landcover
+```{r}
+# Transform the test area object to the same CRS as the raster image
+port_area <- port_area %>% 
+  st_transform(crs = st_crs(port_14))
+
+# Resample the raster image to 10x10 cells
+port_14_10 <- st_warp(port_14, cellsize = 10, crs = st_crs(port_14))
+port_18_10 <- st_warp(port_18, cellsize = 10, crs = st_crs(port_18))
+# Plot the resampled raster image
+mv(port_14_10) + mv(port_area)
+
+# Crop the resampled raster image to the test area
+port_14_10_crop <- st_crop(port_14_10, port_area)
+port_18_10_crop <- st_crop(port_18_10, port_area)
+# Plot the cropped raster image
+mv(port_area)+mv(port_14_10_crop)
+
+
+```
+
+```{r}
+# Reclassify the cropped raster image
+port_14_10_rc <- port_14_10_crop %>% 
+  mutate(lc = case_when(
+    port_51740_landcover_2014.tif < 6  ~ 0,
+    port_51740_landcover_2014.tif >= 6 ~ 1
+  ))
+port_18_10_rc <- port_18_10_crop %>% 
+  mutate(lc = case_when(
+    port_51740_landcover_2018.tif < 6  ~ 0,
+    port_51740_landcover_2018.tif >= 6 ~ 1
+  ))
+# Plot the reclassified raster image
+port_lc_14 <- port_14_10_rc["lc"]
+mv(port_lc_14)
+port_lc_18 <- port_18_10_rc["lc"]
+mv(port_lc_18)
+```
+
+
+
+
+
+
+
+
+
+```{r}
+port18 <- st_join(port_18_10_rc,port_tracts18) 
+port14 <- st_join(port_14_10_rc,port_tract) 
+##james18 <- st_join(james_18_10_rc,james_tracts18) 
+##james14 <- st_join(james_14_10_rc,james_tracts14) 
+```
+```{r}
+port18 <- st_crop(port18, port_area)
+port14 <- st_crop(port14, port_area)
+
+##pc = prcomprm() # based on all data
+##out = predict(r, pc)
+##plot(merge(out), breaks = "equal", join_zlim = FALSE)
+```
+
+```{r}
+# Reclassify the cropped raster image
+port_14_road<- port14 %>% 
+  mutate(road = case_when(
+    port_51740_landcover_2014.tif == 9  ~ 1,
+    port_51740_landcover_2014.tif != 9 ~ 0
+  ))
+port_18_road <- port18 %>% 
+  mutate(road = case_when(
+    port_51740_landcover_2018.tif == 9  ~ 1,
+    port_51740_landcover_2018.tif != 9 ~ 0
+  ))
+
+road <- st_as_sf(road)
+xx<-st_buffer(road, 100)
+r = make_grid(xx, res = 10, buffer = 0.5)
+d = dist_to_nearest(r, road, progress = FALSE)
+
+##focal2(port_14_road["road"], matrix(1, 3, 3), "mean")
+##focal2(port_18_road["lc"], matrix(1, 3, 3), "mean")
+
+```
+
+
+```{r}
+ggplot() +
+  geom_sf(data=james_tracts14) +
+  geom_raster(data=rast(james_14_10) %>% na.omit %>% filter(value > 0), 
+              aes(x,y,fill=as.factor(value))) +
+  scale_fill_viridis(direction = -1, discrete=TRUE, name ="Land Cover\nChange") +
+  labs(title = "Land Cover Change, 2000-2010") +
+  mapTheme +
+  theme(legend.direction="horizontal")
+```
