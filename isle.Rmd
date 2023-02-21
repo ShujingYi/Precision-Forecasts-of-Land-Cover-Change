@@ -1,7 +1,7 @@
 ---
-title: "port"
+title: "isle"
 author: "Xinge Zhang"
-date: "2023-02-07"
+date: "2023-02-21"
 output: html_document
 ---
 
@@ -79,31 +79,24 @@ palette10 <- c("#f7fcf0","#e0f3db","#ccebc5","#a8ddb5","#7bccc4",
 mv<- mapview
 ```
 
-```{r}
-table(port_change)
-```
 
 
-## Portsmouth_landcover
+## isle_landcover
 ```{r}
-port_14 <- read_stars("Data/lc/port_51740_lc_2014/port_51740_landcover_2014.tif")
-port_18 <- read_stars("Data/lc/port_51740_lc_2018/port_51740_landcover_2018.tif")
-port_area <- st_read("Data/boundary/portsmouth.shp")
+isle_14 <- read_stars("Data/lc/islelc_14_10x10.tif")
+isle_18 <- read_stars("Data/lc/islelc_18_10x10.tif")
+isle_area <- st_read("Data/boundary/Isle_of_Wight.shp")
 # Transform the test area object to the same CRS as the raster image
-port_area <- port_area %>% 
-  st_transform(crs = st_crs(port_14))
+isle_area <- isle_area %>% 
+  st_transform(crs = st_crs(isle_14))
 
-# Resample the raster image to 10x10 cells
-port_14_10 <- st_warp(port_14, cellsize = 10, crs = st_crs(port_14))
-port_18_10 <- st_warp(port_18, cellsize = 10, crs = st_crs(port_18))
 # Crop the resampled raster image to the test area
-port_14_10_crop <- st_crop(port_14_10, port_area)
-port_18_10_crop <- st_crop(port_18_10, port_area)
-
-port_change <- c(port_18_10_crop-port_14_10_crop)%>%
-  mutate(lcchange = case_when(port_51740_landcover_2018.tif != 0 ~ 1,
-                              port_51740_landcover_2018.tif != 0 ~ 0))
-
+isle_14_10_crop <- st_crop(isle_14, isle_area)
+isle_18_10_crop <- st_crop(isle_18, isle_area)
+# Resample the raster image to 10x10 cells
+isle_change <- c(isle_18_10_crop - isle_14_10_crop)%>%
+  mutate(lcchange = case_when(islelc_18_10x10.tif != 0 ~ 1,
+                              islelc_18_10x10.tif != 0 ~ 0))
 
 ```
 
@@ -112,40 +105,40 @@ port_change <- c(port_18_10_crop-port_14_10_crop)%>%
 
 ```{r}
 # Reclassify the cropped raster image
-port_14_10_rc <- port_14_10_crop %>% 
+isle_14_10_rc <- isle_14_10_crop %>% 
   mutate(lc = case_when(
-    port_51740_landcover_2014.tif < 6  ~ 0,
-    port_51740_landcover_2014.tif >= 6 ~ 1
+    islelc_14_10x10.tif < 6  ~ 0,
+    islelc_14_10x10.tif >= 6 ~ 1
   ))
-port_18_10_rc <- port_18_10_crop %>% 
+isle_18_10_rc <- isle_18_10_crop %>% 
   mutate(lc = case_when(
-    port_51740_landcover_2018.tif < 6  ~ 0,
-    port_51740_landcover_2018.tif >= 6 ~ 1
+    islelc_18_10x10.tif < 6  ~ 0,
+    islelc_18_10x10.tif >= 6 ~ 1
   ))
 # Calculate the mean value for a 3x3 cell neighborhood
-port_14_pcnt_imperv = focal2(port_14_10_rc["lc"], matrix(1, 3, 3), "mean")
-port_18_pcnt_imperv = focal2(port_18_10_rc["lc"], matrix(1, 3, 3), "mean")
+isle_14_pcnt_imperv = focal2(isle_14_10_rc["lc"], matrix(1, 3, 3), "mean")
+isle_18_pcnt_imperv = focal2(isle_18_10_rc["lc"], matrix(1, 3, 3), "mean")
 
 ```
 
 ```{r}
 # Reclassify the cropped raster image
-port_14_10_rc <- port_14_10_crop %>% 
+isle_14_10_rc <- isle_14_10_crop %>% 
   mutate(lcp = case_when(
-    port_51740_landcover_2014.tif < 6  ~ 0,
-    port_51740_landcover_2014.tif >= 6 ~ 1
+    islelc_14_10x10.tif < 6  ~ 0,
+    islelc_14_10x10.tif >= 6 ~ 1
   ))
-port_18_10_rc <- port_18_10_crop %>% 
+isle_18_10_rc <- isle_18_10_crop %>% 
   mutate(lcp = case_when(
-    port_51740_landcover_2018.tif < 6  ~ 0,
-    port_51740_landcover_2018.tif >= 6 ~ 1
+    islelc_18_10x10.tif < 6  ~ 0,
+    islelc_18_10x10.tif >= 6 ~ 1
   ))
-port_change_rc <- (port_18_10_rc -port_14_10_rc)
+isle_change_rc <- (isle_18_10_rc - isle_14_10_rc)
 ```
 
 ```{r}
 #remove
-rm(port_14_10,port_18_10,port_14,port_18)
+rm(isle_14,isle_18)
 ```
 
 
@@ -154,10 +147,10 @@ rm(port_14_10,port_18_10,port_14,port_18)
 ```{r}
 options(tigris_use_cache = TRUE)
 # port
-port_tracts14 <- 
+isle_tracts14 <- 
   get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
-          year=2014, state="51", county="Portsmouth", geometry=T, output="wide") %>%
-  st_transform(st_crs(port_14_10_rc)) %>%
+          year=2014, state="51", county="Isle of Wight", geometry=T, output="wide") %>%
+  st_transform(st_crs(isle_14_10_rc)) %>%
   rename(TotalPop = B01003_001E, 
          Whites = B02001_002E,
          MedHHInc = B19013_001E,
@@ -167,12 +160,12 @@ dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
          ) %>%
   dplyr::select(-Whites, -GEOID)
 
-port_tracts14[is.na(port_tracts14)]<- 0
+isle_tracts14[is.na(isle_tracts14)]<- 0
 
-port_tracts18 <- 
+isle_tracts18 <- 
   get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
-          year=2018, state="51", county="Portsmouth", geometry=T, output="wide") %>%
-  st_transform(st_crs(port_18_10_rc)) %>%
+          year=2018, state="51", county="Isle of Wight", geometry=T, output="wide") %>%
+  st_transform(st_crs(isle_18_10_rc)) %>%
   rename(TotalPop = B01003_001E, 
          Whites = B02001_002E,
          MedHHInc = B19013_001E,
@@ -181,9 +174,9 @@ dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
   mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
          ) %>%
   dplyr::select(-Whites, -GEOID)
-port_tracts18[is.na(port_tracts18)]<- 0
+isle_tracts18[is.na(isle_tracts18)]<- 0
 
-port_tract <- st_join(port_tracts14, port_tracts18) %>%
+isle_tract <- st_join(isle_tracts14, isle_tracts18) %>%
   mutate(popchange = (TotalPop.y - TotalPop.x)/TotalPop.x,
          pctwhitechange = pctWhite.y - pctWhite.x,
          Unitchange = TotalUnit.y - TotalUnit.x,
@@ -197,48 +190,48 @@ port_tract <- st_join(port_tracts14, port_tracts18) %>%
 
 ```{r}
 # Reclassify the road
-port_14_road<- port_14_10_crop %>% 
+isle_14_road<- isle_14_10_crop %>% 
   mutate(road = case_when(
-    port_51740_landcover_2014.tif == 9  ~ 1,
-    port_51740_landcover_2014.tif != 9 ~ 0
+    islelc_14_10x10.tif == 9  ~ 1,
+    islelc_14_10x10.tif != 9 ~ 0
   ))
 
-port_18_road <- port_18_10_crop%>% 
+isle_18_road <- isle_18_10_crop%>% 
   mutate(road = case_when(
-    port_51740_landcover_2018.tif == 9  ~ 1,
-    port_51740_landcover_2018.tif != 9 ~ 0
+    islelc_18_10x10.tif == 9  ~ 1,
+    islelc_18_10x10.tif != 9 ~ 0
   ))
 
 ```
 
 ```{r}
-road_14 <- focal2(port_14_road["road"], matrix(1, 3, 3), "mean")
+road_14 <- focal2(isle_14_road["road"], matrix(1, 3, 3), "mean")
 road_14 <- focal2(road_14["road"], matrix(1, 3, 3), "mean")
 road_14 <- focal2(road_14["road"], matrix(1, 3, 3), "mean")
-road_18 <- focal2(port_18_road["road"], matrix(1, 3, 3), "mean")
+road_18 <- focal2(isle_18_road["road"], matrix(1, 3, 3), "mean")
 road_18 <- focal2(road_18["road"], matrix(1, 3, 3), "mean")
 road_18 <- focal2(road_18["road"], matrix(1, 3, 3), "mean")
 mv(road_14)
 ```
 
 ```{r}
-port_14_canopy<- port_14_10_crop %>% 
+isle_14_canopy<- isle_14_10_crop %>% 
   mutate(canopy = case_when(
-    port_51740_landcover_2014.tif == 3  ~ 1,   #Tree Canopy
-    port_51740_landcover_2014.tif == 10 ~ 0.5, #Tree Canopy over Structure
-    port_51740_landcover_2014.tif == 11 ~ 0.5, #Tree Canopy over Other
-    port_51740_landcover_2014.tif == 12 ~ 0.5, #Tree Canopy over road
-    !(port_51740_landcover_2014.tif %in% c(3,10,11,12)) ~ 0
+    islelc_14_10x10.tif == 3  ~ 1,   #Tree Canopy
+    islelc_14_10x10.tif == 10 ~ 0.5, #Tree Canopy over Structure
+    islelc_14_10x10.tif == 11 ~ 0.5, #Tree Canopy over Other
+    islelc_14_10x10.tif == 12 ~ 0.5, #Tree Canopy over road
+    !(islelc_14_10x10.tif %in% c(3,10,11,12)) ~ 0
     
   ))
 
-port_18_canopy <- port_18_10_crop%>% 
+isle_18_canopy <- isle_18_10_crop%>% 
   mutate(canopy = case_when(
-    port_51740_landcover_2018.tif == 3  ~ 1,   #Tree Canopy
-    port_51740_landcover_2018.tif == 10 ~ 0.5, #Tree Canopy over Structure
-    port_51740_landcover_2018.tif == 11 ~ 0.5, #Tree Canopy over Other
-    port_51740_landcover_2018.tif == 12 ~ 0.5, #Tree Canopy over road
-    !(port_51740_landcover_2018.tif %in% c(3,10,11,12)) ~ 0
+    islelc_18_10x10.tif == 3  ~ 1,   #Tree Canopy
+    islelc_18_10x10.tif == 10 ~ 0.5, #Tree Canopy over Structure
+    islelc_18_10x10.tif == 11 ~ 0.5, #Tree Canopy over Other
+    islelc_18_10x10.tif == 12 ~ 0.5, #Tree Canopy over road
+    !(islelc_18_10x10.tif %in% c(3,10,11,12)) ~ 0
   ))
 
 ```
@@ -246,80 +239,80 @@ port_18_canopy <- port_18_10_crop%>%
 
 
 ```{r}
-port_14_permeable<- port_14_10_crop %>% 
+isle_14_permeable<- isle_14_10_crop %>% 
   mutate(perm = case_when(
-    port_51740_landcover_2014.tif == 2  ~ 0.3,   #shrub
-    port_51740_landcover_2014.tif == 4 ~ 0.3, #herb
-    port_51740_landcover_2014.tif == 5 ~ 0.4, #wetland
-    !(port_51740_landcover_2014.tif %in% c(2,4,5)) ~ 0
+    islelc_14_10x10.tif == 2  ~ 0.3,   #shrub
+    islelc_14_10x10.tif == 4 ~ 0.3, #herb
+    islelc_14_10x10.tif == 5 ~ 0.4, #wetland
+    !(islelc_14_10x10.tif %in% c(2,4,5)) ~ 0
   ))
 
-port_18_permeable<- port_18_10_crop %>% 
+isle_18_permeable<- isle_18_10_crop %>% 
   mutate(perm = case_when(
-    port_51740_landcover_2018.tif == 2  ~ 0.3,   #shrub
-    port_51740_landcover_2018.tif == 4 ~ 0.3, #herb
-    port_51740_landcover_2018.tif == 5 ~ 0.4, #wetland
-    !(port_51740_landcover_2018.tif %in% c(2,4,5)) ~ 0
+    islelc_18_10x10.tif == 2  ~ 0.3,   #shrub
+    islelc_18_10x10.tif == 4 ~ 0.3, #herb
+    islelc_18_10x10.tif == 5 ~ 0.4, #wetland
+    !(islelc_18_10x10.tif %in% c(2,4,5)) ~ 0
   ))
 
 
 ```
 
 ```{r}
-port_14_water<- port_14_10_crop %>% 
+isle_14_water<- isle_14_10_crop %>% 
   mutate(water = case_when(
-    port_51740_landcover_2014.tif == 1  ~ 1,
-    port_51740_landcover_2014.tif != 1 ~ 0
+    islelc_14_10x10.tif == 1  ~ 1,
+    islelc_14_10x10.tif != 1 ~ 0
   ))
 
-port_18_water <- port_18_10_crop%>% 
+isle_18_water <- isle_18_10_crop%>% 
   mutate(water = case_when(
-    port_51740_landcover_2018.tif == 1  ~ 1,
-    port_51740_landcover_2018.tif != 1 ~ 0
+    islelc_18_10x10.tif == 1  ~ 1,
+    islelc_18_10x10.tif != 1 ~ 0
   ))
 
 ```
 
 
 ```{r}
-port_14_barren<- port_14_10_crop %>% 
+isle_14_barren<- isle_14_10_crop %>% 
   mutate(barren = case_when(
-    port_51740_landcover_2014.tif == 6  ~ 1,
-    port_51740_landcover_2014.tif != 6 ~ 0
+    islelc_14_10x10.tif == 6  ~ 1,
+    islelc_14_10x10.tif != 6 ~ 0
   ))
 
-port_18_barren <- port_18_10_crop%>% 
+isle_18_barren <- isle_18_10_crop%>% 
   mutate(barren = case_when(
-    port_51740_landcover_2018.tif == 6  ~ 1,
-    port_51740_landcover_2018.tif != 6 ~ 0
+    islelc_18_10x10.tif == 6  ~ 1,
+    islelc_18_10x10.tif != 6 ~ 0
   ))
 ```
 
 ```{r}
-port_14_structure<- port_14_10_crop %>% 
+isle_14_structure<- isle_14_10_crop %>% 
   mutate(struct= case_when(
-    port_51740_landcover_2014.tif == 7  ~ 1,
-    port_51740_landcover_2014.tif != 7 ~ 0
+    islelc_14_10x10.tif == 7  ~ 1,
+    islelc_14_10x10.tif != 7 ~ 0
   ))
 
-port_18_structure<- port_18_10_crop%>% 
+isle_18_structure<- isle_18_10_crop%>% 
   mutate(struct = case_when(
-    port_51740_landcover_2018.tif == 7  ~ 1,
-    port_51740_landcover_2018.tif != 7 ~ 0
+    islelc_18_10x10.tif == 7  ~ 1,
+    islelc_18_10x10.tif != 7 ~ 0
   ))
 ```
 
 ```{r}
-port_14_other<- port_14_10_crop %>% 
+isle_14_other<- isle_14_10_crop %>% 
   mutate(other= case_when(
-    port_51740_landcover_2014.tif == 8  ~ 1,
-    port_51740_landcover_2014.tif != 8 ~ 0
+    islelc_14_10x10.tif == 8  ~ 1,
+    islelc_14_10x10.tif != 8 ~ 0
   ))
 
-port_18_other<- port_18_10_crop%>% 
+isle_18_other<- isle_18_10_crop%>% 
   mutate(other = case_when(
-    port_51740_landcover_2018.tif == 8 ~ 1,
-    port_51740_landcover_2018.tif != 8 ~ 0
+    islelc_18_10x10.tif == 8 ~ 1,
+    islelc_18_10x10.tif != 8 ~ 0
   ))
 ```
 
@@ -331,10 +324,10 @@ dem <- st_mosaic(dem1, dem2)
 ```
 
 ```{r}
-dem2 <- st_warp(dem2, crs=st_crs(port_14_10_rc))
-dem_port <- st_crop (dem2, port_area)
-dem_port <- st_warp(dem_port, port_14_10_crop)
-port_slope<- slope(dem_port)
+dem2 <- st_warp(dem, crs=st_crs(isle_14_10_rc))
+dem_isle <- st_crop (dem2, isle_area)
+dem_isle <- st_warp(dem_isle, isle_14_10_crop)
+isle_slope<- slope(dem_isle)
 
 ```
 
@@ -344,82 +337,82 @@ rm(dem1,dem2,dem)
 
 
 ```{r}
-port14 <- 
-  st_join(port_14_10_rc,port_tract) %>%
-  st_join(.,port_14_barren)%>%
-  st_join(.,port_14_canopy)%>%
-  st_join(.,port_14_road)%>%
-  st_join(.,port_14_other)%>%
-  st_join(.,port_14_pcnt_imperv)%>%
-  st_join(.,port_14_permeable)%>%
-  st_join(.,port_14_structure)%>%
-  st_join(.,port_14_water)%>%
+isle14 <- 
+  st_join(isle_14_10_rc,isle_tract) %>%
+  st_join(.,isle_14_barren)%>%
+  st_join(.,isle_14_canopy)%>%
+  st_join(.,isle_14_road)%>%
+  st_join(.,isle_14_other)%>%
+  st_join(.,isle_14_pcnt_imperv)%>%
+  st_join(.,isle_14_permeable)%>%
+  st_join(.,isle_14_structure)%>%
+  st_join(.,isle_14_water)%>%
   st_join(.,dem_port)%>%
-  st_join(.,port_slope) %>%
-  st_join(.,port_change)
+  st_join(.,isle_slope) %>%
+  st_join(.,isle_change)
   
-port18 <- 
-  st_join(port_18_10_rc,port_tract) %>%
-  st_join(.,port_18_barren)%>%
-  st_join(.,port_18_canopy)%>%
-  st_join(.,port_18_road)%>%
-  st_join(.,port_18_other)%>%
-  st_join(.,port_18_pcnt_imperv)%>%
-  st_join(.,port_18_permeable)%>%
-  st_join(.,port_18_structure)%>%
-  st_join(.,port_18_water)%>%
-  st_join(.,dem_port)%>%
-  st_join(.,port_slope)
+isle18 <- 
+  st_join(isle_18_10_rc,isle_tract) %>%
+  st_join(.,isle_18_barren)%>%
+  st_join(.,isle_18_canopy)%>%
+  st_join(.,isle_18_road)%>%
+  st_join(.,isle_18_other)%>%
+  st_join(.,isle_18_pcnt_imperv)%>%
+  st_join(.,isle_18_permeable)%>%
+  st_join(.,isle_18_structure)%>%
+  st_join(.,isle_18_water)%>%
+  st_join(.,dem_isle)%>%
+  st_join(.,isle_slope)
 ```
 
 
 ```{r}
 # convert raster to sf to crop
-port_change_sf <- st_as_sf(port_change_rc['lcp'])%>%na.omit()
+isle_change_sf <- st_as_sf(isle_change_rc['lcp'])%>%na.omit()
 # crop for analysis
-port14_crop <- st_crop(port14, port_change_sf%>%filter(lcp !=0))
+isle14_crop <- st_crop(isle14, isle_change_sf%>%filter(lcp !=0))
 ```
 
 ```{r}
-port14_df <- 
-  as.data.frame(port14) %>% 
+isle14_df <- 
+  as.data.frame(isle14) %>% 
   na.omit() %>%
-  rename(originallc = port_51740_landcover_2014.tif,
+  rename(originallc = isle_51093_landcover_2014.tif,
         terrain = USGS_1_n37w077_20160315.tif )
-port18_df <- 
-  as.data.frame(port18) %>% 
+isle18_df <- 
+  as.data.frame(isle18) %>% 
   na.omit()%>%
-  rename(originallc = port_51740_landcover_2018.tif,
+  rename(originallc = isle_51093_landcover_2018.tif,
           terrain = USGS_1_n37w077_20160315.tif)
-portch_df <- 
-  as.data.frame(port14_crop) %>% 
+islech_df <- 
+  as.data.frame(isle14_crop) %>% 
   na.omit() %>%
-  rename(originallc = port_51740_landcover_2014.tif,
+  rename(originallc = isle_51093_landcover_2014.tif,
         terrain = USGS_1_n37w077_20160315.tif )
 ```
 
 ```{r fig.width=20}
-tm_shape(port_area) +
+tm_shape(isle_area) +
 tm_fill("grey90",alpha = 0.2) +
 tm_borders(col = 'grey')+
-  tm_shape(port14[c(3)],legend.only = TRUE) +
+  tm_shape(isle14[c(3)],legend.only = TRUE) +
   tm_raster(palette = palette5,legend.hist = TRUE)  +
   tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_shape(port14[c(4)],legend.only = TRUE) +
+  tm_shape(isle14[c(4)],legend.only = TRUE) +
   tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
   tm_raster(palette = palette5,legend.hist = TRUE)  +
-  tm_shape(port14[c(5)],legend.only = TRUE) +
+  tm_shape(isle14[c(5)],legend.only = TRUE) +
   tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
   tm_raster(palette = palette5,legend.hist = TRUE)  +
-   tm_shape(port14[c(6)],legend.only = TRUE) +
+   tm_shape(isle14[c(6)],legend.only = TRUE) +
   tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
   tm_raster(palette = palette5,legend.hist = TRUE)  +
-  tm_shape(port14[c(3:6)]) +
+  tm_shape(isle14[c(3:6)]) +
   tm_facets(ncol = 4) +
   tm_raster(palette = palette5)  +
-  tm_shape(port_change_sf%>%filter(lcp == 1))+
+  tm_shape(isle_change_sf%>%filter(lcp == 1))+
   tm_bubbles(size = 0.01,alpha=0.01,col= c('#ffffcc'))+
-  tm_shape(port_change_sf%>%filter(lcp == -1))+
+  tm_shape(isle_change_sf%>%filter(lcp == -1))+
   tm_bubbles(size = 0.01,alpha=0.01, col= c('darkgreen'))+
 tm_layout(
 	inner.margins=c(.1,.1, .1,0.01),
@@ -433,10 +426,10 @@ tm_layout(
 ```
 
 ```{r fig.width=20}
-tm_shape(port_area) +
+tm_shape(isle_area) +
 tm_fill("grey90",alpha = 0.2) +
 tm_borders(col = 'grey')+
-  tm_shape(port14[c(8,11,13)]) +
+  tm_shape(isle14[c(8,11,13)]) +
   tm_legend(outside = TRUE,hist.width = 2 ,hist.height = 5) +
 tm_raster(palette = palette5[c(1:3)],legend.hist = TRUE)  +
     tm_facets(ncol = 3) +
@@ -452,10 +445,10 @@ tm_layout(legend.outside.size = 0.2,
 
 
 ```{r fig.width=10}
-tm_shape(port_area) +
+tm_shape(isle_area) +
 tm_fill("#253494") +
 tm_borders(col = 'grey')+
-  tm_shape(port14_crop[c(8)],legend.only = TRUE) +
+  tm_shape(isle14_crop[c(8)],legend.only = TRUE) +
   tm_raster(palette =  palette5[c(1:3)],legend.hist = TRUE)  +
   tm_legend(outside = TRUE,hist.width = 2,hist.height = 5) +
 tm_layout(
@@ -469,10 +462,10 @@ tm_layout(
 ```
 
 ```{r fig.width=15}
-tm_shape(port_area) +
+tm_shape(isle_area) +
 tm_fill("#253494") +
 tm_borders(col = 'grey')+
-  tm_shape(port14_crop[c(3)],legend.only = TRUE) +
+  tm_shape(isle14_crop[c(3)],legend.only = TRUE) +
   tm_raster(palette = palette10,legend.hist = TRUE)  +
   tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
   tm_shape(port14_crop[c(4)],legend.only = TRUE) +
@@ -498,10 +491,10 @@ tm_layout(
 
 
 ```{r fig.width=20}
-tm_shape(port_area) +
+tm_shape(isle_area) +
 tm_fill("grey90",alpha = 0.2) +
 tm_borders(col = 'grey')+
-  tm_shape(port14[c(2,7,9,10,12)]) +
+  tm_shape(isle14[c(2,7,9,10,12)]) +
   tm_legend(outside = TRUE,hist.width = 2 ,hist.height = 5) +
 tm_raster(palette = palette10[c(1,9)],legend.hist = TRUE)  +
     tm_facets(ncol = 5) +
@@ -516,52 +509,22 @@ tm_layout(legend.outside.size = 0.2,
 
 
 
-```{r}
-port14[['port_51740_landcover_2014.tif']] %>% 
-  #values() %>% 
-  hist(main="Distribution of landcover types",   
-       xtick =  c(
-         'Water',
-         'Emergent Wetlands',
-         'Tree Canopy',
-         'Shrub',
-         'Low Vegetation',
-         'Barren',
-         'Impervious Structures',
-         'Other Impervious',
-         'Impervious Roads',
-         'Tree Canopy over Impervious Structures',
-         'Tree Canopy over Other Impervious',
-         'Tree Canopy over Impervious Roads')
-         
-       )  
-     col= palette2[2])
-```
 
-
-
-```{r}
-port14[['lcp']] %>% 
-  #values() %>% 
-  hist(main="Distribution of impervious",    
-     xlab= "impervious ratio",
-     col= "lightblue")
-```
 
 
 
 
 ```{r}
-write_stars(port14,'Data/output/port14.tif')
-write_stars(port18,'Data/output/port18.tif')
+write_stars(isle14,'Data/output/isle14.tif')
+write_stars(isle18,'Data/output/isle18.tif')
 
 ```
 
 
 
 ```{r}
-write.csv(port14_df, 'Data/output/port14.csv')
-write.csv(port18_df, 'Data/output/port18.csv')
+write.csv(isle14_df, 'Data/output/isle14.csv')
+write.csv(isle18_df, 'Data/output/isle18.csv')
 ```
 
 

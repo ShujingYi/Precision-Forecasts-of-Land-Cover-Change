@@ -216,8 +216,7 @@ james_18_pcnt_imperv = focal2(james_18_10_rc["lc"], matrix(1, 3, 3), "mean")
 # histogram of the percentage of 1 (impervious) per 30x30m cell
 hist(james_14_pcnt_imperv$lc)
 
-# Plot the result of the mean calculation
-# Why do these two methods look different?
+
 plot(james_14_pcnt_imperv)
 plot(james_18_pcnt_imperv)
 #mv(james_14_pcnt_imperv)
