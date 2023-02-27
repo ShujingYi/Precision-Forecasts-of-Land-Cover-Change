@@ -330,7 +330,6 @@ jame_18_other<- jame_18_10_crop%>%
   ))
 ```
 
-# dem
 ```{r}
 # Read in the raster image
 dem1 <- read_stars("Data/DEM/USGS_1_n38w077_20170509.tif")
@@ -530,7 +529,7 @@ tm_raster(palette = palette10[c(1,9)],legend.hist = TRUE)  +
     tm_facets(ncol = 5) +
 tm_layout(legend.outside.size = 0.2,
 	inner.margins=c(.1,.1, .1,0.01),
-  panel.labels = c('Impervious Ratio','Barren','Road', 'Other Impervious','Structure'),
+  panel.labels = c('Impervious Ratio','Barren','Road', 'Other Impervious','Structure','Change'),
 	panel.label.bg.color = 'white',
 	panel.label.size = 1.5,
 	legend.outside.position	= "right")
@@ -539,18 +538,24 @@ tm_layout(legend.outside.size = 0.2,
 
 
 
+```{r}
+port14 <- read_stars('~/Github/Precision-Forecasts-of-Land-Cover-Change/port14')
+```
+
+
+
 
 
 
 ```{r}
-write_stars(jame14,'Data/output/jame14.tif')
-write_stars(jame18,'Data/output/jame18.tif')
+write_stars(jame14,'jame14.tif')
+write_stars(jame18,'jame18.tif')
 
 ```
 
 
 
 ```{r}
-write.csv(jame14_df, 'Data/output/jame14.csv')
-write.csv(jame18_df, 'Data/output/jame18.csv')
+write.csv(jame14_df, 'jame14.csv')
+write.csv(jame18_df, 'jame18.csv')
 ```

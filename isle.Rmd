@@ -20,11 +20,9 @@ library(kableExtra)
 library(tidycensus)
 library(tigris)
 library(FNN)
-#library(QuantPsyc) # JE Note: in R 4.1, QuantPsyc package not available.
 library(caret)
 library(yardstick)
 library(pscl)
-library(plotROC) 
 library(ggrepel)
 library(pROC)
 library(grid)
@@ -36,7 +34,6 @@ library(stars)
 library(starsExtra)
 library(mapview)
 library(glue)
-library(tidymodels)
 plotTheme <- theme(
   plot.title =element_text(size=12),
   plot.subtitle = element_text(size=8),
@@ -347,7 +344,7 @@ isle14 <-
   st_join(.,isle_14_permeable)%>%
   st_join(.,isle_14_structure)%>%
   st_join(.,isle_14_water)%>%
-  st_join(.,dem_port)%>%
+  st_join(.,dem_isle)%>%
   st_join(.,isle_slope) %>%
   st_join(.,isle_change)
   

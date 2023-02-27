@@ -514,6 +514,9 @@ tm_layout(legend.outside.size = 0.2,
 ```
 
 
+```{r}
+port14 <- read_stars('~/Github/Precision-Forecasts-of-Land-Cover-Change/port14.tif')
+```
 
 
 ```{r}
@@ -552,16 +555,16 @@ port14[['lcp']] %>%
 
 
 ```{r}
-write_stars(port14,'Data/output/port14.tif')
-write_stars(port18,'Data/output/port18.tif')
+write_stars(port14,'port14.tif')
+write_stars(port18,'port18.tif')
 
 ```
 
 
 
 ```{r}
-write.csv(port14_df, 'Data/output/port14.csv')
-write.csv(port18_df, 'Data/output/port18.csv')
+write.csv(port14_df, 'port14.csv')
+write.csv(port18_df, 'port18.csv')
 ```
 
 
