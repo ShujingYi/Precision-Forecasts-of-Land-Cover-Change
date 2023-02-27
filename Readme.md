@@ -52,7 +52,7 @@ Understanding the quality and quantity of types of impervious services & Differe
 
 **What size cell is the appropriate analysis cell**
 
-- Possible cell range: 15-30m
+- Possible cell range: 10m
 
 # Team roles
 
