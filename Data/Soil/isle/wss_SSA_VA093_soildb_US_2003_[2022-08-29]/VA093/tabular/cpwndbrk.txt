@@ -1,0 +1,8 @@
+|9||"PRCA"|"Prunus caroliniana"|"Carolina laurelcherry"|"22426478"|"116672968"
+|15||"PITA"|"Pinus taeda"|"loblolly pine"|"22426478"|"116672967"
+|17||"PIEL"|"Pinus elliottii"|"slash pine"|"22426478"|"116672966"
+|14||"JUVIS"|"Juniperus virginiana var. silicicola"|"southern redcedar"|"22426478"|"116672965"
+|9||"PRCA"|"Prunus caroliniana"|"Carolina laurelcherry"|"22426526"|"116672972"
+|15||"PITA"|"Pinus taeda"|"loblolly pine"|"22426526"|"116672971"
+|17||"PIEL"|"Pinus elliottii"|"slash pine"|"22426526"|"116672970"
+|14||"JUVIS"|"Juniperus virginiana var. silicicola"|"southern redcedar"|"22426526"|"116672969"

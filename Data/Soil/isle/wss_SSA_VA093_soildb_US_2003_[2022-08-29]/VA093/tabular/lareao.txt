@@ -1,0 +1,8 @@
+"Climate Factor Area (USLE)"|"0"|"Climate Factor"|231800|"10861"|"510767"
+"County or Parish"|"VA093"|"Isle of Wight"|231800|"10861"|"510768"
+"MLRA"|"153A"|"Atlantic Coast Flatwoods"|195170|"10861"|"510769"
+"MLRA"|"153B"|"Tidewater Area"|3550|"10861"|"510770"
+"MLRA Soil Survey Area"|"3-RIC"|"Richmond, Virginia"|231800|"10861"|"510771"
+"MLRA Soil Survey Regional Office Area"|"3"|"Raleigh, NC"|231800|"10861"|"510772"
+"Rainfall Factor Area (USLE)"|"240"|"Rainfall Factor"|231800|"10861"|"510773"
+"State or Territory"|"VA"|"Virginia"|231800|"10861"|"510774"
