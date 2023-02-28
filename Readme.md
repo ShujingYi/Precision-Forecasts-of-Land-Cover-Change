@@ -58,13 +58,13 @@ Understanding the quality and quantity of types of impervious services & Differe
 # Features
 1. `originallc` originallandcover
 
-2. `lcp` permeable/impermeable
-<6 - 0
+2. `lcp` permeable/impermeable:
+< 6 - 0
 >=6 - 1
 
 3. `lcchange` whether landcover has changed
 
-4. `lc` 3*3的permeable rate
+4. `lc` 3*3的permeable rate:
 0-1（0.1，0.2， 0.3， 0.4， 0.5， 0.6， 0.7， 0.8）
 
 5. `popchange`` per m^2
@@ -112,6 +112,7 @@ not other - 0
 
 19. `geoid`-- blockgroup id
 
+20. `soil type`
 # Team roles
 
 - Project Management: Shujing Yi
