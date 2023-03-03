@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
 # R setup
@@ -74,15 +74,16 @@ palette10 <- c("#f7fcf0","#e0f3db","#ccebc5","#a8ddb5","#7bccc4",
                "#4eb3d3","#2b8cbe","#0868ac","#084081","#f7fcf0")
 
 mv<- mapview
+g <- glimpse
 ```
 
 
 
 ## isle_landcover
 ```{r}
-isle_14 <- read_stars("Data/lc/islelc_14_10x10.tif")
-isle_18 <- read_stars("Data/lc/islelc_18_10x10.tif")
-isle_area <- st_read("Data/boundary/Isle_of_Wight.shp")
+isle_14 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/lc/islelc_14_10x10.tif")
+isle_18 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/lc/islelc_18_10x10.tif")
+isle_area <- st_read("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/boundary/Isle_of_Wight.shp")
 # Transform the test area object to the same CRS as the raster image
 isle_area <- isle_area %>% 
   st_transform(crs = st_crs(isle_14))
@@ -103,12 +104,15 @@ isle_change <- c(isle_18_10_crop - isle_14_10_crop)%>%
 ```{r}
 # Reclassify the cropped raster image
 isle_14_10_rc <- isle_14_10_crop %>% 
-  mutate(lc = case_when(
+  mutate(originallc = islelc_14_10x10.tif,
+    lc = case_when(
     islelc_14_10x10.tif < 6  ~ 0,
     islelc_14_10x10.tif >= 6 ~ 1
   ))
 isle_18_10_rc <- isle_18_10_crop %>% 
-  mutate(lc = case_when(
+  mutate(
+    originallc = islelc_18_10x10.tif,
+    lc = case_when(
     islelc_18_10x10.tif < 6  ~ 0,
     islelc_18_10x10.tif >= 6 ~ 1
   ))
@@ -155,9 +159,13 @@ isle_tracts14 <-
 dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
   mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
          ) %>%
-  dplyr::select(-Whites, -GEOID)
+  dplyr::select(-Whites)
 
 isle_tracts14[is.na(isle_tracts14)]<- 0
+isle_tracts14 <-
+  isle_tracts14%>%
+  mutate(
+         area = st_area(geometry))
 
 isle_tracts18 <- 
   get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
@@ -170,20 +178,27 @@ isle_tracts18 <-
 dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
   mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
          ) %>%
-  dplyr::select(-Whites, -GEOID)
+  dplyr::select(-Whites)
 isle_tracts18[is.na(isle_tracts18)]<- 0
 
+isle_tracts18 <-
+  isle_tracts18%>%
+  mutate(
+         area = st_area(geometry))
+
 isle_tract <- st_join(isle_tracts14, isle_tracts18) %>%
-  mutate(popchange = (TotalPop.y - TotalPop.x)/TotalPop.x,
-         pctwhitechange = pctWhite.y - pctWhite.x,
-         Unitchange = TotalUnit.y - TotalUnit.x,
-         MedHHIncchange = MedHHInc.y - MedHHInc.x)%>%
+  mutate(popchange = (TotalPop.y - TotalPop.x)/(TotalPop.x * area.x),
+         pctwhitechange = (pctWhite.y - pctWhite.x),
+         Unitchange = (TotalUnit.y - TotalUnit.x)/area.x,
+         MedHHIncchange = (MedHHInc.y - MedHHInc.x)/area.x,
+         Area = area.x,
+         GEOID = GEOID.x)%>%
   dplyr::select(-ends_with(".x"),-ends_with(".y"))
 ```
 
 
 
-# road
+## road
 
 ```{r}
 # Reclassify the road
@@ -208,7 +223,15 @@ road_14 <- focal2(road_14["road"], matrix(1, 3, 3), "mean")
 road_18 <- focal2(isle_18_road["road"], matrix(1, 3, 3), "mean")
 road_18 <- focal2(road_18["road"], matrix(1, 3, 3), "mean")
 road_18 <- focal2(road_18["road"], matrix(1, 3, 3), "mean")
-mv(road_14)
+
+```
+
+```{r}
+# rename before join
+road_14<-road_14%>%
+  rename(pctroad = road)
+road_18<-road_18%>%
+  rename(pctroad = road)
 ```
 
 ```{r}
@@ -268,6 +291,17 @@ isle_18_water <- isle_18_10_crop%>%
     islelc_18_10x10.tif != 1 ~ 0
   ))
 
+water_14 <- focal2(isle_14_water["water"], matrix(1, 25, 25), "mean")
+water_14 <- focal2(water_14["water"], matrix(1, 25, 25), "mean")
+water_14 <- focal2(water_14["water"], matrix(1, 25, 25), "mean")
+water_18 <- focal2(isle_14_water["water"], matrix(1, 25, 25), "mean")
+water_18 <- focal2(water_18["water"], matrix(1, 25, 25), "mean")
+water_18 <- focal2(water_18["water"], matrix(1, 25, 25), "mean")
+# rename before join
+water_14<-water_14%>%
+  rename(pctdistw = water)
+water_18<-water_18%>%
+  rename(pctdistw = water)
 ```
 
 
@@ -313,10 +347,11 @@ isle_18_other<- isle_18_10_crop%>%
   ))
 ```
 
+## Read in the raster image
 ```{r}
-# Read in the raster image
-dem1 <- read_stars("Data/DEM/USGS_1_n38w077_20170509.tif")
-dem2 <- read_stars("Data/DEM/USGS_1_n37w077_20160315.tif")
+
+dem1 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/DEM/USGS_1_n38w077_20170509.tif")
+dem2 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/DEM/USGS_1_n37w077_20160315.tif")
 dem <- st_mosaic(dem1, dem2)
 ```
 
@@ -328,11 +363,18 @@ isle_slope<- slope(dem_isle)
 
 ```
 
+## Read in the soil data
+```{r}
+soil <- st_read('~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/Soil/isle/isle_soil.shp')
+```
+
 ```{r}
 rm(dem1,dem2,dem)
 ```
 
 
+
+## join all the data
 ```{r}
 isle14 <- 
   st_join(isle_14_10_rc,isle_tract) %>%
@@ -347,7 +389,7 @@ isle14 <-
   st_join(.,dem_isle)%>%
   st_join(.,isle_slope) %>%
   st_join(.,isle_change)
-  
+
 isle18 <- 
   st_join(isle_18_10_rc,isle_tract) %>%
   st_join(.,isle_18_barren)%>%
@@ -362,6 +404,9 @@ isle18 <-
   st_join(.,isle_slope)
 ```
 
+```{r}
+rm(dem_isle, isle_14_10_crop, isle_14_10_rc, isle_14_barren, isle_14_canopy, isle_14_other, isle_14_pcnt_imperv, isle_14_permeable,isle_14_road, isle_14_structure, isle_14_water, isle_18_10_crop, isle_18_10_rc, isle_18_barren, isle_18_canopy, isle_18_other, isle_18_pcnt_imperv, isle_18_permeable,isle_18_road, isle_18_structure, isle_18_water)
+```
 
 ```{r}
 # convert raster to sf to crop
@@ -374,18 +419,18 @@ isle14_crop <- st_crop(isle14, isle_change_sf%>%filter(lcp !=0))
 isle14_df <- 
   as.data.frame(isle14) %>% 
   na.omit() %>%
-  rename(originallc = isle_51093_landcover_2014.tif,
-        terrain = USGS_1_n37w077_20160315.tif )
+  rename(originallc = islelc_14_10x10.tif ,
+        terrain = USGS_1_n38w077_20170509.tif )
 isle18_df <- 
   as.data.frame(isle18) %>% 
   na.omit()%>%
-  rename(originallc = isle_51093_landcover_2018.tif,
-          terrain = USGS_1_n37w077_20160315.tif)
+  rename(originallc = islelc_18_10x10.tif ,
+          terrain = USGS_1_n38w077_20170509.tif)l
 islech_df <- 
   as.data.frame(isle14_crop) %>% 
   na.omit() %>%
-  rename(originallc = isle_51093_landcover_2014.tif,
-        terrain = USGS_1_n37w077_20160315.tif )
+  rename(originallc = islelc_14_10x10.tif ,
+        terrain = USGS_1_n38w077_20170509.tif )
 ```
 
 ```{r fig.width=20}
@@ -465,16 +510,16 @@ tm_borders(col = 'grey')+
   tm_shape(isle14_crop[c(3)],legend.only = TRUE) +
   tm_raster(palette = palette10,legend.hist = TRUE)  +
   tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_shape(port14_crop[c(4)],legend.only = TRUE) +
+  tm_shape(isle14_crop[c(4)],legend.only = TRUE) +
   tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
   tm_raster(palette = palette10,legend.hist = TRUE)  +
-  tm_shape(port14_crop[c(5)],legend.only = TRUE) +
+  tm_shape(isle14_crop[c(5)],legend.only = TRUE) +
   tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
   tm_raster(palette = palette10,legend.hist = TRUE)  +
-   tm_shape(port14_crop[c(6)],legend.only = TRUE) +
+   tm_shape(isle14_crop[c(6)],legend.only = TRUE) +
   tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
   tm_raster(palette = palette10,legend.hist = TRUE)  +
-  tm_shape(port14_crop['lcp']) +
+  tm_shape(isle14_crop['lcp']) +
   tm_raster(palette = palette5)  +
 tm_layout(
 	inner.margins=c(.1,.1, .1,0.01),
@@ -520,8 +565,8 @@ write_stars(isle18,'Data/output/isle18.tif')
 
 
 ```{r}
-write.csv(isle14_df, 'Data/output/isle14.csv')
-write.csv(isle18_df, 'Data/output/isle18.csv')
+write.csv(isle14_df, '~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/output/isle14.csv')
+write.csv(isle18_df, '~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/output/isle18.csv')
 ```
 
 

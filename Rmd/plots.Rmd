@@ -1,0 +1,195 @@
+---
+title: "eda"
+author: "Xinge Zhang"
+date: "2023-02-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ⅰ.Introduction
+
+### Background
+
+### Motivation & Use Case
+
+## Ⅱ. Exploratory Analysis
+
+### The Data: Understanding landcover data
+
+#### dependent: pervious to impervious surface during the period 2014-201
+#### independent:
+    lccover change 能change
+    1. `originallc` originallandcover
+    
+    2. `lcp` permeable/impermeable:
+    < 6 - 0
+    >= 6 - 1
+    
+    3. `lcchange` whether landcover has changed: 1
+    
+    4. `lc` 3*3的permeable rate:
+    0-1（0.1，0.2， 0.3， 0.4， 0.5， 0.6， 0.7， 0.8）
+    
+    5. `popchange` per m^2
+    
+    6. `pctwhitechange`
+    
+    7. `unitchange` per m^2
+    
+    8. `medhhincchange` per m^2
+    
+    9. `road` road 1/0
+    
+    10. `water` water
+    
+    11. `canopy` tree canopy：
+    tree canopy - 1
+    tree canopy over structure -0.5
+    tree canopy over other -0.5
+    tree canopy over road - 0.5
+    other - 0
+    
+    12. `perm` permeable:
+    2 -shrub - 0.3
+    4 - herb - 0.3
+    5 - wetand - 0.4
+    other -0
+    
+    13. `barren` barren:
+    6 - barren - 1
+    not barren - 0
+    
+    14. `struct` structure:
+    7 - structure - 1
+    not structure - 0
+    
+    15. `other` other:
+    8 - other - 1
+    not other - 0
+    
+    16. `terrain`dem
+    
+    17. `slope`slope
+    
+    18. `area` m^2 per block group
+    
+    19. `geoid`-- blockgroup id
+    
+    20. `soil type`-
+
+
+模型encode：categorial：尤其是
+
+possible features per 10*10 :
+
+Road density
+**distance to rivers**
+
+impervious / pervious
+landcover type
+population density
+population change per 4 year
+median hh income
+median hh income change per 4 year
+percentage of white population
+percentage of white population change per 4 year
+percentage of changing from impervious to pervious/from pervious to impervious in 4 years
+predicted landcover type:
+
+possible features per block group :
+
+percentage of impervious / pervious change:
+population
+population change per 4 year
+median hh income
+median hh income change per 4 year
+percentage of white population
+percentage of white population change per 4 year
+percentage of changing from impervious to pervious/from pervious to impervious in 4 years
+predicted landcover type composition:
+
+possible feautres per county:
+
+percentage of impervious / pervious change:
+population
+population change per 4 year
+median hh income
+median hh income change per 4 year
+percentage of white population
+percentage of white population change per 4 year
+percentage of changing from impervious to pervious/from pervious to impervious in 4 years
+predicted landcover type composition:
+development speed defined by: speed of population change and landcover change speed
+Agricultural land use, vegetation cover and water loss:
+
+
+```{r}
+glimpse(isle18_df)
+```
+
+```{r}
+
+glimpse(isle14_df)
+```
+```{r fig.width=15}
+# Define column names vector
+col_names <-colnames(isle14_df)[5:8] 
+
+# Set up empty list to store plots
+plots_list <- list()
+
+# Set up for loop
+for (col in col_names) {
+  
+  # Create plot for current column
+  p <- ggplot(isle14_df, aes(x = isle14_df[,col],fill = lcp, group= lcp)) +
+    geom_density(alpha = .3) +
+    xlab("Value") +
+    ggtitle(col)
+  
+  # Add plot to list
+  plots_list[[col]] <- p
+}
+
+# Display plots in a grid format
+grid.arrange(grobs = plots_list, nrow = length(col_names))
+
+```
+
+
+```{r fig.width=15}
+# Define column names vector
+col_names <-colnames(isle14_df)[9:12] 
+
+# Set up empty list to store plots
+plots_list <- list()
+
+# Set up for loop
+for (col in col_names) {
+  
+  # Create plot for current column
+  p <- ggplot(isle14_df, aes(x = isle14_df[,col],fill = lcp, group= lcp)) +
+    geom_histogram(alpha = .3) +
+    xlab("Value") +
+    ggtitle(col)
+  
+  # Add plot to list
+  plots_list[[col]] <- p
+}
+
+# Display plots in a grid format
+grid.arrange(grobs = plots_list, ncol= length(col_names))
+
+```
+
+
+
+
+```{r}
+ggplot(isle14_df, aes(x= pctwhitechange, fill = lcp, group= lcp)) +
+   geom_density(alpha = .3)
+```
+
