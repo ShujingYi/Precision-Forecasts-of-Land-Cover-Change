@@ -88,54 +88,62 @@ isle_area <- st_read("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/bou
 isle_area <- isle_area %>% 
   st_transform(crs = st_crs(isle_14))
 
-# Crop the resampled raster image to the test area
+# Crop the re-sampled raster image to the test area
 isle_14_10_crop <- st_crop(isle_14, isle_area)
 isle_18_10_crop <- st_crop(isle_18, isle_area)
-# Resample the raster image to 10x10 cells
-isle_change <- c(isle_18_10_crop - isle_14_10_crop)%>%
-  mutate(lcchange = case_when(islelc_18_10x10.tif != 0 ~ 1,
-                              islelc_18_10x10.tif != 0 ~ 0))
 
 ```
 
 
-
+## reclass the pearmeable and impearmeable
 
 ```{r}
 # Reclassify the cropped raster image
 isle_14_10_rc <- isle_14_10_crop %>% 
-  mutate(originallc = islelc_14_10x10.tif,
+  mutate(originallc = case_when(
+    islelc_14_10x10.tif == 1  ~ 1,
+    islelc_14_10x10.tif == 2 ~ 2,
+    islelc_14_10x10.tif == 3 ~ 3,
+    islelc_14_10x10.tif == 4 ~ 4,
+    islelc_14_10x10.tif == 5 ~ 5,
+    islelc_14_10x10.tif == 6 ~ 6,
+    islelc_14_10x10.tif == 7 ~ 7,
+    islelc_14_10x10.tif == 8 ~ 8,
+    islelc_14_10x10.tif == 9 ~ 9,
+    islelc_14_10x10.tif == 10 ~ 10,
+    islelc_14_10x10.tif == 11  ~ 11,
+    islelc_14_10x10.tif == 12 ~ 12
+  ),
     lc = case_when(
-    islelc_14_10x10.tif < 6  ~ 0,
-    islelc_14_10x10.tif >= 6 ~ 1
+    islelc_14_10x10.tif < 6  ~ 0, # permeable
+    islelc_14_10x10.tif >= 6 ~ 1 # impermeable
   ))
 isle_18_10_rc <- isle_18_10_crop %>% 
   mutate(
-    originallc = islelc_18_10x10.tif,
+    originallc =case_when(
+    islelc_18_10x10.tif == 1  ~ 1,
+    islelc_18_10x10.tif == 2 ~ 2,
+    islelc_18_10x10.tif == 3 ~ 3,
+    islelc_18_10x10.tif == 4 ~ 4,
+    islelc_18_10x10.tif == 5 ~ 5,
+    islelc_18_10x10.tif == 6 ~ 6,
+    islelc_18_10x10.tif == 7 ~ 7,
+    islelc_18_10x10.tif == 8 ~ 8,
+    islelc_18_10x10.tif == 9 ~ 9,
+    islelc_18_10x10.tif == 10 ~ 10,
+    islelc_18_10x10.tif == 11  ~ 11,
+    islelc_18_10x10.tif == 12 ~ 12
+  ),
     lc = case_when(
     islelc_18_10x10.tif < 6  ~ 0,
     islelc_18_10x10.tif >= 6 ~ 1
   ))
+
 # Calculate the mean value for a 3x3 cell neighborhood
 isle_14_pcnt_imperv = focal2(isle_14_10_rc["lc"], matrix(1, 3, 3), "mean")
 isle_18_pcnt_imperv = focal2(isle_18_10_rc["lc"], matrix(1, 3, 3), "mean")
-
 ```
 
-```{r}
-# Reclassify the cropped raster image
-isle_14_10_rc <- isle_14_10_crop %>% 
-  mutate(lcp = case_when(
-    islelc_14_10x10.tif < 6  ~ 0,
-    islelc_14_10x10.tif >= 6 ~ 1
-  ))
-isle_18_10_rc <- isle_18_10_crop %>% 
-  mutate(lcp = case_when(
-    islelc_18_10x10.tif < 6  ~ 0,
-    islelc_18_10x10.tif >= 6 ~ 1
-  ))
-isle_change_rc <- (isle_18_10_rc - isle_14_10_rc)
-```
 
 ```{r}
 #remove
@@ -196,363 +204,155 @@ isle_tract <- st_join(isle_tracts14, isle_tracts18) %>%
   dplyr::select(-ends_with(".x"),-ends_with(".y"))
 ```
 
-
-
-## road
-
+## dem image
 ```{r}
-# Reclassify the road
-isle_14_road<- isle_14_10_crop %>% 
-  mutate(road = case_when(
-    islelc_14_10x10.tif == 9  ~ 1,
-    islelc_14_10x10.tif != 9 ~ 0
-  ))
-
-isle_18_road <- isle_18_10_crop%>% 
-  mutate(road = case_when(
-    islelc_18_10x10.tif == 9  ~ 1,
-    islelc_18_10x10.tif != 9 ~ 0
-  ))
-
-```
-
-```{r}
-road_14 <- focal2(isle_14_road["road"], matrix(1, 3, 3), "mean")
-road_14 <- focal2(road_14["road"], matrix(1, 3, 3), "mean")
-road_14 <- focal2(road_14["road"], matrix(1, 3, 3), "mean")
-road_18 <- focal2(isle_18_road["road"], matrix(1, 3, 3), "mean")
-road_18 <- focal2(road_18["road"], matrix(1, 3, 3), "mean")
-road_18 <- focal2(road_18["road"], matrix(1, 3, 3), "mean")
-
-```
-
-```{r}
-# rename before join
-road_14<-road_14%>%
-  rename(pctroad = road)
-road_18<-road_18%>%
-  rename(pctroad = road)
-```
-
-```{r}
-isle_14_canopy<- isle_14_10_crop %>% 
-  mutate(canopy = case_when(
-    islelc_14_10x10.tif == 3  ~ 1,   #Tree Canopy
-    islelc_14_10x10.tif == 10 ~ 0.5, #Tree Canopy over Structure
-    islelc_14_10x10.tif == 11 ~ 0.5, #Tree Canopy over Other
-    islelc_14_10x10.tif == 12 ~ 0.5, #Tree Canopy over road
-    !(islelc_14_10x10.tif %in% c(3,10,11,12)) ~ 0
-    
-  ))
-
-isle_18_canopy <- isle_18_10_crop%>% 
-  mutate(canopy = case_when(
-    islelc_18_10x10.tif == 3  ~ 1,   #Tree Canopy
-    islelc_18_10x10.tif == 10 ~ 0.5, #Tree Canopy over Structure
-    islelc_18_10x10.tif == 11 ~ 0.5, #Tree Canopy over Other
-    islelc_18_10x10.tif == 12 ~ 0.5, #Tree Canopy over road
-    !(islelc_18_10x10.tif %in% c(3,10,11,12)) ~ 0
-  ))
-
-```
-
-
-
-```{r}
-isle_14_permeable<- isle_14_10_crop %>% 
-  mutate(perm = case_when(
-    islelc_14_10x10.tif == 2  ~ 0.3,   #shrub
-    islelc_14_10x10.tif == 4 ~ 0.3, #herb
-    islelc_14_10x10.tif == 5 ~ 0.4, #wetland
-    !(islelc_14_10x10.tif %in% c(2,4,5)) ~ 0
-  ))
-
-isle_18_permeable<- isle_18_10_crop %>% 
-  mutate(perm = case_when(
-    islelc_18_10x10.tif == 2  ~ 0.3,   #shrub
-    islelc_18_10x10.tif == 4 ~ 0.3, #herb
-    islelc_18_10x10.tif == 5 ~ 0.4, #wetland
-    !(islelc_18_10x10.tif %in% c(2,4,5)) ~ 0
-  ))
-
-
-```
-
-```{r}
-isle_14_water<- isle_14_10_crop %>% 
-  mutate(water = case_when(
-    islelc_14_10x10.tif == 1  ~ 1,
-    islelc_14_10x10.tif != 1 ~ 0
-  ))
-
-isle_18_water <- isle_18_10_crop%>% 
-  mutate(water = case_when(
-    islelc_18_10x10.tif == 1  ~ 1,
-    islelc_18_10x10.tif != 1 ~ 0
-  ))
-
-water_14 <- focal2(isle_14_water["water"], matrix(1, 25, 25), "mean")
-water_14 <- focal2(water_14["water"], matrix(1, 25, 25), "mean")
-water_14 <- focal2(water_14["water"], matrix(1, 25, 25), "mean")
-water_18 <- focal2(isle_14_water["water"], matrix(1, 25, 25), "mean")
-water_18 <- focal2(water_18["water"], matrix(1, 25, 25), "mean")
-water_18 <- focal2(water_18["water"], matrix(1, 25, 25), "mean")
-# rename before join
-water_14<-water_14%>%
-  rename(pctdistw = water)
-water_18<-water_18%>%
-  rename(pctdistw = water)
-```
-
-
-```{r}
-isle_14_barren<- isle_14_10_crop %>% 
-  mutate(barren = case_when(
-    islelc_14_10x10.tif == 6  ~ 1,
-    islelc_14_10x10.tif != 6 ~ 0
-  ))
-
-isle_18_barren <- isle_18_10_crop%>% 
-  mutate(barren = case_when(
-    islelc_18_10x10.tif == 6  ~ 1,
-    islelc_18_10x10.tif != 6 ~ 0
-  ))
-```
-
-```{r}
-isle_14_structure<- isle_14_10_crop %>% 
-  mutate(struct= case_when(
-    islelc_14_10x10.tif == 7  ~ 1,
-    islelc_14_10x10.tif != 7 ~ 0
-  ))
-
-isle_18_structure<- isle_18_10_crop%>% 
-  mutate(struct = case_when(
-    islelc_18_10x10.tif == 7  ~ 1,
-    islelc_18_10x10.tif != 7 ~ 0
-  ))
-```
-
-```{r}
-isle_14_other<- isle_14_10_crop %>% 
-  mutate(other= case_when(
-    islelc_14_10x10.tif == 8  ~ 1,
-    islelc_14_10x10.tif != 8 ~ 0
-  ))
-
-isle_18_other<- isle_18_10_crop%>% 
-  mutate(other = case_when(
-    islelc_18_10x10.tif == 8 ~ 1,
-    islelc_18_10x10.tif != 8 ~ 0
-  ))
-```
-
-## Read in the raster image
-```{r}
-
 dem1 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/DEM/USGS_1_n38w077_20170509.tif")
 dem2 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/DEM/USGS_1_n37w077_20160315.tif")
 dem <- st_mosaic(dem1, dem2)
-```
-
-```{r}
 dem2 <- st_warp(dem, crs=st_crs(isle_14_10_rc))
 dem_isle <- st_crop (dem2, isle_area)
 dem_isle <- st_warp(dem_isle, isle_14_10_crop)
 isle_slope<- slope(dem_isle)
-
 ```
 
-## Read in the soil data
+## water shed
+scale is too large for analysis. Maybe can be used for later analysis
+## soil
+
 ```{r}
-soil <- st_read('~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/Soil/isle/isle_soil.shp')
+soil <- st_read('~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/Soil/isle/isle_soil.shp', crs= 'EPSG:4326')
+soilclass <- soil%>%
+  mutate(soil = case_when(
+    isle__Ra_1 == 'D' ~ 6,
+    isle__Ra_1 == 'C' ~ 5,
+    isle__Ra_1 == 'B/D' ~ 4,
+    isle__Ra_1 == 'B' ~ 3,
+    isle__Ra_1 == 'A/D' ~ 2,
+    isle__Ra_1 == 'A' ~ 1,
+    is.na(isle__Ra_1) ~ 0
+  )) %>%
+dplyr::select(-colnames(soil),geometry)%>%
+  st_transform(st_crs(isle_14_10_rc))
+  
+soil_isle <- st_crop(soilclass, isle_area)
 ```
+
 
 ```{r}
 rm(dem1,dem2,dem)
 ```
 
+# -----testing part
+```{r}
+# Function to calculate focal mean
+calc_focal_mean <- function(df, field, ksize) {
+  focal2(df[field], matrix(1, ksize, ksize), "mean") %>%
+    focal2(., matrix(1, ksize, ksize), "mean") %>%
+    focal2(., matrix(1, ksize, ksize), "mean")
+}
+
+# Road
+isle_14_road <- isle_14_10_crop %>%
+  mutate(road = as.numeric(islelc_14_10x10.tif == 9))
+
+isle_18_road <- isle_18_10_crop %>%
+  mutate(road = as.numeric(islelc_18_10x10.tif == 9))
+
+road_14 <- calc_focal_mean(isle_14_road, "road", 3)
+road_18 <- calc_focal_mean(isle_18_road, "road", 3)
+
+# Canopy
+isle_14_canopy <- isle_14_10_crop %>%
+  mutate(canopy = as.numeric(islelc_14_10x10.tif == 3))
+
+isle_18_canopy <- isle_18_10_crop %>%
+  mutate(canopy = as.numeric(islelc_18_10x10.tif == 3))
+
+canopy_14_mean <- calc_focal_mean(isle_14_canopy, "canopy", 3)
+canopy_18_mean <- calc_focal_mean(isle_18_canopy, "canopy", 3)
+
+# Shrub
+isle_14_shrub <- isle_14_10_crop %>%
+  mutate(shrub = as.numeric(islelc_14_10x10.tif == 2))
+
+isle_18_shrub <- isle_18_10_crop %>%
+  mutate(shrub = as.numeric(islelc_18_10x10.tif == 2))
+
+shrub_14_mean <- calc_focal_mean(isle_14_shrub, "shrub", 3)
+shrub_18_mean <- calc_focal_mean(isle_18_shrub, "shrub", 3)
+
+# Water
+isle_14_water <- isle_14_10_crop %>%
+  mutate(water = as.numeric(islelc_14_10x10.tif == 1))
+
+isle_18_water <- isle_18_10_crop %>%
+  mutate(water = as.numeric(islelc_18_10x10.tif == 1))
+
+water_14_mean <- calc_focal_mean(isle_14_water, "water", 25)
+water_18_mean <- calc_focal_mean(isle_18_water, "water", 25)
+
+# Other
+isle_14_other <- isle_14_10_crop %>%
+  mutate(other = as.numeric(islelc_14_10x10.tif == 8))
+
+isle_18_other <- isle_18_10_crop %>%
+  mutate(other = as.numeric(islelc_18_10x10.tif == 8))
+
+```
+
+
+```{r}
+other_14_mean <- focal2(isle_14_other["other"], matrix(1, 3, 3), "mean")
+other_14_mean <- focal2(other_14_mean["other"], matrix(1, 3, 3), "mean")
+other_18_mean <- focal2(isle_18_other["other"], matrix(1, 3, 3), "mean")
+other_18_mean<- focal2(other_18_mean["other"], matrix(1, 3, 3), "mean")
+```
 
 
 ## join all the data
 ```{r}
-isle14 <- 
+isle14 <-  cbind(isle_14_10_crop,canopy_14_mean, road_14, other_14_mean, shrub_14_mean, water_14_mean, isle_14_pcnt_imperv, isle_change_rc)
+rm(canopy_14_mean, road_14, other_14_mean, shrub_14_mean, water_14_mean, isle_14_pcnt_imperv, isle_change_rc)
+
+isle18 <- cbind(isle_18_10_crop, canopy_18_mean, road_18,other_18_mean, shrub_18_mean, water_18_mean,isle_18_pcnt_imperv)
+rm(canopy_18_mean, road_18, other_18_mean, shrub_18_mean, water_18_mean, isle_18_pcnt_imperv)
+
+isle_14 <- 
   st_join(isle_14_10_rc,isle_tract) %>%
-  st_join(.,isle_14_barren)%>%
-  st_join(.,isle_14_canopy)%>%
-  st_join(.,isle_14_road)%>%
-  st_join(.,isle_14_other)%>%
-  st_join(.,isle_14_pcnt_imperv)%>%
-  st_join(.,isle_14_permeable)%>%
-  st_join(.,isle_14_structure)%>%
-  st_join(.,isle_14_water)%>%
-  st_join(.,dem_isle)%>%
+  st_join(.,dem_isle)%>% # not changing
   st_join(.,isle_slope) %>%
-  st_join(.,isle_change)
+  st_join(., soil_isle)%>% 
+  st_join(.,isle_change) %>% # change land cover data
+  st_join(., isle_change_rc)  # change impervious(0, 1, -1) -1 is targeted
+  
 
-isle18 <- 
+isle_18 <- 
   st_join(isle_18_10_rc,isle_tract) %>%
-  st_join(.,isle_18_barren)%>%
-  st_join(.,isle_18_canopy)%>%
-  st_join(.,isle_18_road)%>%
-  st_join(.,isle_18_other)%>%
-  st_join(.,isle_18_pcnt_imperv)%>%
-  st_join(.,isle_18_permeable)%>%
-  st_join(.,isle_18_structure)%>%
-  st_join(.,isle_18_water)%>%
-  st_join(.,dem_isle)%>%
-  st_join(.,isle_slope)
+  st_join(.,dem_isle)%>% # not changing
+  st_join(.,isle_slope) %>%
+  st_join(., soil_isle)
 ```
 
 ```{r}
-rm(dem_isle, isle_14_10_crop, isle_14_10_rc, isle_14_barren, isle_14_canopy, isle_14_other, isle_14_pcnt_imperv, isle_14_permeable,isle_14_road, isle_14_structure, isle_14_water, isle_18_10_crop, isle_18_10_rc, isle_18_barren, isle_18_canopy, isle_18_other, isle_18_pcnt_imperv, isle_18_permeable,isle_18_road, isle_18_structure, isle_18_water)
+rm(dem_isle,isle_slope, isle_14_10_crop, isle_14_10_rc, isle_14_canopy, isle_14_other, isle_14_road, isle_14_water, isle_18_10_crop, isle_18_10_rc, isle_18_canopy, isle_18_other, isle_18_road, isle_18_water)
 ```
 
-```{r}
-# convert raster to sf to crop
-isle_change_sf <- st_as_sf(isle_change_rc['lcp'])%>%na.omit()
-# crop for analysis
-isle14_crop <- st_crop(isle14, isle_change_sf%>%filter(lcp !=0))
-```
+
 
 ```{r}
 isle14_df <- 
-  as.data.frame(isle14) %>% 
+  as.data.frame(isle_14) %>% 
   na.omit() %>%
   rename(originallc = islelc_14_10x10.tif ,
-        terrain = USGS_1_n38w077_20170509.tif )
+        terrain = USGS_1_n38w077_20170509.tif )%>%
+  cbind(., isle14)
 isle18_df <- 
-  as.data.frame(isle18) %>% 
+  as.data.frame(isle_18) %>% 
   na.omit()%>%
   rename(originallc = islelc_18_10x10.tif ,
-          terrain = USGS_1_n38w077_20170509.tif)l
-islech_df <- 
-  as.data.frame(isle14_crop) %>% 
-  na.omit() %>%
-  rename(originallc = islelc_14_10x10.tif ,
-        terrain = USGS_1_n38w077_20170509.tif )
+          terrain = USGS_1_n38w077_20170509.tif) %>%
+  cbind(., isle18)
 ```
-
-```{r fig.width=20}
-tm_shape(isle_area) +
-tm_fill("grey90",alpha = 0.2) +
-tm_borders(col = 'grey')+
-  tm_shape(isle14[c(3)],legend.only = TRUE) +
-  tm_raster(palette = palette5,legend.hist = TRUE)  +
-  tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_shape(isle14[c(4)],legend.only = TRUE) +
-  tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_raster(palette = palette5,legend.hist = TRUE)  +
-  tm_shape(isle14[c(5)],legend.only = TRUE) +
-  tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_raster(palette = palette5,legend.hist = TRUE)  +
-   tm_shape(isle14[c(6)],legend.only = TRUE) +
-  tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_raster(palette = palette5,legend.hist = TRUE)  +
-  tm_shape(isle14[c(3:6)]) +
-  tm_facets(ncol = 4) +
-  tm_raster(palette = palette5)  +
-  tm_shape(isle_change_sf%>%filter(lcp == 1))+
-  tm_bubbles(size = 0.01,alpha=0.01,col= c('#ffffcc'))+
-  tm_shape(isle_change_sf%>%filter(lcp == -1))+
-  tm_bubbles(size = 0.01,alpha=0.01, col= c('darkgreen'))+
-tm_layout(
-	inner.margins=c(.1,.1, .1,0.01),
-	legend.outside.position	= "right",
-	panel.labels = c('Population Change','Percentage of White Change','House Unit Change', 'Median Income change'),
-  panel.label.bg.color = 'white',
-	panel.label.size = 1.5
-
-)
-
-```
-
-```{r fig.width=20}
-tm_shape(isle_area) +
-tm_fill("grey90",alpha = 0.2) +
-tm_borders(col = 'grey')+
-  tm_shape(isle14[c(8,11,13)]) +
-  tm_legend(outside = TRUE,hist.width = 2 ,hist.height = 5) +
-tm_raster(palette = palette5[c(1:3)],legend.hist = TRUE)  +
-    tm_facets(ncol = 3) +
-tm_layout(legend.outside.size = 0.2,
-	inner.margins=c(.1,.1, .1,0.01),
-  panel.labels = c('Canopy','Shrubs & Low vegetation','Water', 'Dem','Slope'),
-	panel.label.bg.color = 'white',
-	panel.label.size = 1.5,
-	legend.outside.position	= "right")
-```
-
-
-
-
-```{r fig.width=10}
-tm_shape(isle_area) +
-tm_fill("#253494") +
-tm_borders(col = 'grey')+
-  tm_shape(isle14_crop[c(8)],legend.only = TRUE) +
-  tm_raster(palette =  palette5[c(1:3)],legend.hist = TRUE)  +
-  tm_legend(outside = TRUE,hist.width = 2,hist.height = 5) +
-tm_layout(
-	inner.margins=c(.1,.1, .1,0.01),
-	legend.outside.position	= "right",
-
-  panel.label.bg.color = 'white',
-	panel.label.size = 1.5
-
-)
-```
-
-```{r fig.width=15}
-tm_shape(isle_area) +
-tm_fill("#253494") +
-tm_borders(col = 'grey')+
-  tm_shape(isle14_crop[c(3)],legend.only = TRUE) +
-  tm_raster(palette = palette10,legend.hist = TRUE)  +
-  tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_shape(isle14_crop[c(4)],legend.only = TRUE) +
-  tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_raster(palette = palette10,legend.hist = TRUE)  +
-  tm_shape(isle14_crop[c(5)],legend.only = TRUE) +
-  tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_raster(palette = palette10,legend.hist = TRUE)  +
-   tm_shape(isle14_crop[c(6)],legend.only = TRUE) +
-  tm_legend(outside = TRUE,hist.width = 7,hist.height = 7) +
-  tm_raster(palette = palette10,legend.hist = TRUE)  +
-  tm_shape(isle14_crop['lcp']) +
-  tm_raster(palette = palette5)  +
-tm_layout(
-	inner.margins=c(.1,.1, .1,0.01),
-	legend.outside.position	= "right",
-
-  panel.label.bg.color = 'white',
-	panel.label.size = 1.5
-
-)
-```
-
-
-```{r fig.width=20}
-tm_shape(isle_area) +
-tm_fill("grey90",alpha = 0.2) +
-tm_borders(col = 'grey')+
-  tm_shape(isle14[c(2,7,9,10,12)]) +
-  tm_legend(outside = TRUE,hist.width = 2 ,hist.height = 5) +
-tm_raster(palette = palette10[c(1,9)],legend.hist = TRUE)  +
-    tm_facets(ncol = 5) +
-tm_layout(legend.outside.size = 0.2,
-	inner.margins=c(.1,.1, .1,0.01),
-  panel.labels = c('Impervious Ratio','Barren','Road', 'Other Impervious','Structure'),
-	panel.label.bg.color = 'white',
-	panel.label.size = 1.5,
-	legend.outside.position	= "right")
-```
-
-
-
-
-
-
 
 
 
