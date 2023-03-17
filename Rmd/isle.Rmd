@@ -34,6 +34,7 @@ library(stars)
 library(starsExtra)
 library(mapview)
 library(glue)
+
 plotTheme <- theme(
   plot.title =element_text(size=12),
   plot.subtitle = element_text(size=8),
@@ -91,7 +92,7 @@ isle_area <- isle_area %>%
 # Crop the re-sampled raster image to the test area
 isle_14_10_crop <- st_crop(isle_14, isle_area)
 isle_18_10_crop <- st_crop(isle_18, isle_area)
-
+isle_change_rc <- (isle_18_10_rc - isle_14_10_rc)
 ```
 
 
@@ -311,7 +312,7 @@ other_18_mean<- focal2(other_18_mean["other"], matrix(1, 3, 3), "mean")
 
 ## join all the data
 ```{r}
-isle14 <-  cbind(isle_14_10_crop,canopy_14_mean, road_14, other_14_mean, shrub_14_mean, water_14_mean, isle_14_pcnt_imperv, isle_change_rc)
+isle14 <-  cbind(isle_14_10_crop,canopy_14_mean, road_14, other_14_mean, shrub_14_mean, water_14_mean, isle_14_pcnt_imperv, isle_change_rc,isle_change) # change impervious(0, 1, -1) -1 is targeted
 rm(canopy_14_mean, road_14, other_14_mean, shrub_14_mean, water_14_mean, isle_14_pcnt_imperv, isle_change_rc)
 
 isle18 <- cbind(isle_18_10_crop, canopy_18_mean, road_18,other_18_mean, shrub_18_mean, water_18_mean,isle_18_pcnt_imperv)
@@ -321,9 +322,7 @@ isle_14 <-
   st_join(isle_14_10_rc,isle_tract) %>%
   st_join(.,dem_isle)%>% # not changing
   st_join(.,isle_slope) %>%
-  st_join(., soil_isle)%>% 
-  st_join(.,isle_change) %>% # change land cover data
-  st_join(., isle_change_rc)  # change impervious(0, 1, -1) -1 is targeted
+  st_join(., soil_isle)
   
 
 isle_18 <- 
