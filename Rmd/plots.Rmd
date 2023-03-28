@@ -1,5 +1,5 @@
 ---
-title: "eda"
+title: "plot"
 author: "Xinge Zhang"
 date: "2023-02-28"
 output: html_document

@@ -1,0 +1,416 @@
+<PAMDataset>
+  <PAMRasterBand band="1">
+    <GDALRasterAttributeTable tableType="thematic">
+      <FieldDefn index="0">
+        <Name>Value</Name>
+        <Type>0</Type>
+        <Usage>5</Usage>
+      </FieldDefn>
+      <FieldDefn index="1">
+        <Name>Count</Name>
+        <Type>1</Type>
+        <Usage>1</Usage>
+      </FieldDefn>
+      <FieldDefn index="2">
+        <Name>Acres</Name>
+        <Type>1</Type>
+        <Usage>5</Usage>
+      </FieldDefn>
+      <FieldDefn index="3">
+        <Name>GeneralLU</Name>
+        <Type>2</Type>
+        <Usage>2</Usage>
+      </FieldDefn>
+      <FieldDefn index="4">
+        <Name>LandUse</Name>
+        <Type>2</Type>
+        <Usage>2</Usage>
+      </FieldDefn>
+      <FieldDefn index="5">
+        <Name>Red</Name>
+        <Type>0</Type>
+        <Usage>6</Usage>
+      </FieldDefn>
+      <FieldDefn index="6">
+        <Name>Green</Name>
+        <Type>0</Type>
+        <Usage>7</Usage>
+      </FieldDefn>
+      <FieldDefn index="7">
+        <Name>Blue</Name>
+        <Type>0</Type>
+        <Usage>8</Usage>
+      </FieldDefn>
+      <Row index="0">
+        <F>11</F>
+        <F>33850930</F>
+        <F>8364.801600000001</F>
+        <F>Water</F>
+        <F>Estuarine/Marine</F>
+        <F>0</F>
+        <F>92</F>
+        <F>230</F>
+      </Row>
+      <Row index="1">
+        <F>12</F>
+        <F>634749</F>
+        <F>156.8509</F>
+        <F>Water</F>
+        <F>Lakes and Reservoirs</F>
+        <F>0</F>
+        <F>92</F>
+        <F>230</F>
+      </Row>
+      <Row index="2">
+        <F>13</F>
+        <F>265832</F>
+        <F>65.6889</F>
+        <F>Water</F>
+        <F>Riverine Ponds</F>
+        <F>0</F>
+        <F>92</F>
+        <F>230</F>
+      </Row>
+      <Row index="3">
+        <F>14</F>
+        <F>36895</F>
+        <F>9.117000000000001</F>
+        <F>Water</F>
+        <F>Terrene Ponds</F>
+        <F>0</F>
+        <F>92</F>
+        <F>230</F>
+      </Row>
+      <Row index="4">
+        <F>15</F>
+        <F>186372</F>
+        <F>46.0538</F>
+        <F>Water</F>
+        <F>Lotic Water (fresh)</F>
+        <F>0</F>
+        <F>92</F>
+        <F>230</F>
+      </Row>
+      <Row index="5">
+        <F>21</F>
+        <F>10197716</F>
+        <F>2519.927</F>
+        <F>Impervious Roads</F>
+        <F>Roads</F>
+        <F>0</F>
+        <F>0</F>
+        <F>0</F>
+      </Row>
+      <Row index="6">
+        <F>22</F>
+        <F>7924358</F>
+        <F>1958.1643</F>
+        <F>Impervious Structures</F>
+        <F>Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="7">
+        <F>23</F>
+        <F>14484481</F>
+        <F>3579.2166</F>
+        <F>Impervious, Other</F>
+        <F>Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="8">
+        <F>24</F>
+        <F>1033832</F>
+        <F>255.4671</F>
+        <F>Tree Canopy over Impervious</F>
+        <F>Tree Canopy Over Roads</F>
+        <F>138</F>
+        <F>138</F>
+        <F>136</F>
+      </Row>
+      <Row index="9">
+        <F>25</F>
+        <F>244193</F>
+        <F>60.3418</F>
+        <F>Tree Canopy over Impervious</F>
+        <F>Tree Canopy Over Structures</F>
+        <F>138</F>
+        <F>138</F>
+        <F>136</F>
+      </Row>
+      <Row index="10">
+        <F>26</F>
+        <F>1454919</F>
+        <F>359.5207</F>
+        <F>Tree Canopy over Impervious</F>
+        <F>Tree Canopy Over Other Impervious</F>
+        <F>138</F>
+        <F>138</F>
+        <F>136</F>
+      </Row>
+      <Row index="11">
+        <F>28</F>
+        <F>26185972</F>
+        <F>6470.7368</F>
+        <F>Turf Grass</F>
+        <F>Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="12">
+        <F>29</F>
+        <F>370598</F>
+        <F>91.5774</F>
+        <F>Pervious Developed, Other</F>
+        <F>Transitional Barren</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="13">
+        <F>51</F>
+        <F>168</F>
+        <F>0.0415</F>
+        <F>Pervious Developed, Other</F>
+        <F>Suspended Succession Barren</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="14">
+        <F>52</F>
+        <F>2309606</F>
+        <F>570.7198</F>
+        <F>Pervious Developed, Other</F>
+        <F>Suspended Succession Herbaceous</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="15">
+        <F>53</F>
+        <F>4097</F>
+        <F>1.0124</F>
+        <F>Pervious Developed, Other</F>
+        <F>Suspended Succession Scrub/Shrub</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="16">
+        <F>27</F>
+        <F>13182033</F>
+        <F>3257.3726</F>
+        <F>Tree Canopy over Turf Grass</F>
+        <F>Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="17">
+        <F>41</F>
+        <F>3103327</F>
+        <F>766.8538</F>
+        <F>Forest</F>
+        <F>Forest</F>
+        <F>38</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="18">
+        <F>42</F>
+        <F>1665636</F>
+        <F>411.5903</F>
+        <F>Tree Canopy, Other</F>
+        <F>Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="19">
+        <F>55</F>
+        <F>396561</F>
+        <F>97.99299999999999</F>
+        <F>Natural Succession</F>
+        <F>Natural Succession Herbaceous</F>
+        <F>170</F>
+        <F>255</F>
+        <F>0</F>
+      </Row>
+      <Row index="20">
+        <F>56</F>
+        <F>44767</F>
+        <F>11.0622</F>
+        <F>Natural Succession</F>
+        <F>Natural Succession Scrub/Shrub</F>
+        <F>170</F>
+        <F>255</F>
+        <F>0</F>
+      </Row>
+      <Row index="21">
+        <F>82</F>
+        <F>45393</F>
+        <F>11.2169</F>
+        <F>Cropland</F>
+        <F>Cropland Herbaceous</F>
+        <F>255</F>
+        <F>170</F>
+        <F>0</F>
+      </Row>
+      <Row index="22">
+        <F>84</F>
+        <F>366305</F>
+        <F>90.51649999999999</F>
+        <F>Pasture/Hay</F>
+        <F>Pasture/Hay Herbaceous</F>
+        <F>255</F>
+        <F>211</F>
+        <F>127</F>
+      </Row>
+      <Row index="23">
+        <F>85</F>
+        <F>1826</F>
+        <F>0.4512</F>
+        <F>Pasture/Hay</F>
+        <F>Pasture/Hay Scrub/Shrub</F>
+        <F>255</F>
+        <F>211</F>
+        <F>127</F>
+      </Row>
+      <Row index="24">
+        <F>91</F>
+        <F>3938</F>
+        <F>0.9731</F>
+        <F>Wetlands, Tidal Non-forested</F>
+        <F>Tidal Wetlands Barren</F>
+        <F>0</F>
+        <F>168</F>
+        <F>132</F>
+      </Row>
+      <Row index="25">
+        <F>92</F>
+        <F>1289915</F>
+        <F>318.747</F>
+        <F>Wetlands, Tidal Non-forested</F>
+        <F>Tidal Wetlands Herbaceous</F>
+        <F>0</F>
+        <F>168</F>
+        <F>132</F>
+      </Row>
+      <Row index="26">
+        <F>93</F>
+        <F>186</F>
+        <F>0.046</F>
+        <F>Wetlands, Tidal Non-forested</F>
+        <F>Tidal Wetlands Scrub/Shrub</F>
+        <F>0</F>
+        <F>168</F>
+        <F>132</F>
+      </Row>
+      <Row index="27">
+        <F>94</F>
+        <F>420017</F>
+        <F>103.7891</F>
+        <F>Tree Canopy, Other</F>
+        <F>Tidal Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="28">
+        <F>95</F>
+        <F>290444</F>
+        <F>71.77070000000001</F>
+        <F>Forest</F>
+        <F>Tidal Wetlands Forest</F>
+        <F>38</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="29">
+        <F>61</F>
+        <F>3399</F>
+        <F>0.8399</F>
+        <F>Wetlands, Riverine Non-forested</F>
+        <F>Riverine Wetlands Barren</F>
+        <F>77</F>
+        <F>209</F>
+        <F>148</F>
+      </Row>
+      <Row index="30">
+        <F>62</F>
+        <F>27012</F>
+        <F>6.6749</F>
+        <F>Wetlands, Riverine Non-forested</F>
+        <F>Riverine Wetlands Herbaceous</F>
+        <F>77</F>
+        <F>209</F>
+        <F>148</F>
+      </Row>
+      <Row index="31">
+        <F>63</F>
+        <F>26</F>
+        <F>0.0064</F>
+        <F>Wetlands, Riverine Non-forested</F>
+        <F>Riverine Wetlands Scrub/Shrub</F>
+        <F>77</F>
+        <F>209</F>
+        <F>148</F>
+      </Row>
+      <Row index="32">
+        <F>64</F>
+        <F>139593</F>
+        <F>34.4944</F>
+        <F>Tree Canopy, Other</F>
+        <F>Riverine Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="33">
+        <F>65</F>
+        <F>719534</F>
+        <F>177.8019</F>
+        <F>Forest</F>
+        <F>Riverine Wetlands Forest</F>
+        <F>38</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="34">
+        <F>72</F>
+        <F>239</F>
+        <F>0.0591</F>
+        <F>Wetlands, Terrene Non-forested</F>
+        <F>Terrene Wetlands Herbaceous</F>
+        <F>186</F>
+        <F>245</F>
+        <F>217</F>
+      </Row>
+      <Row index="35">
+        <F>74</F>
+        <F>4687</F>
+        <F>1.1582</F>
+        <F>Tree Canopy, Other</F>
+        <F>Terrene Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="36">
+        <F>75</F>
+        <F>18600</F>
+        <F>4.5962</F>
+        <F>Forest</F>
+        <F>Terrene Wetlands Forest</F>
+        <F>38</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+    </GDALRasterAttributeTable>
+  </PAMRasterBand>
+</PAMDataset>

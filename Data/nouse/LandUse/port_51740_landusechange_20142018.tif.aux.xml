@@ -1,0 +1,1246 @@
+<PAMDataset>
+  <PAMRasterBand band="1">
+    <GDALRasterAttributeTable tableType="thematic">
+      <FieldDefn index="0">
+        <Name>Value</Name>
+        <Type>0</Type>
+        <Usage>5</Usage>
+      </FieldDefn>
+      <FieldDefn index="1">
+        <Name>Count</Name>
+        <Type>1</Type>
+        <Usage>1</Usage>
+      </FieldDefn>
+      <FieldDefn index="2">
+        <Name>Acres</Name>
+        <Type>1</Type>
+        <Usage>5</Usage>
+      </FieldDefn>
+      <FieldDefn index="3">
+        <Name>General LU Change</Name>
+        <Type>2</Type>
+        <Usage>2</Usage>
+      </FieldDefn>
+      <FieldDefn index="4">
+        <Name>Full LU Change</Name>
+        <Type>2</Type>
+        <Usage>2</Usage>
+      </FieldDefn>
+      <FieldDefn index="5">
+        <Name>Red</Name>
+        <Type>0</Type>
+        <Usage>5</Usage>
+      </FieldDefn>
+      <FieldDefn index="6">
+        <Name>Green</Name>
+        <Type>0</Type>
+        <Usage>5</Usage>
+      </FieldDefn>
+      <FieldDefn index="7">
+        <Name>Blue</Name>
+        <Type>0</Type>
+        <Usage>5</Usage>
+      </FieldDefn>
+      <Row index="0">
+        <F>2311</F>
+        <F>1</F>
+        <F>0.0002</F>
+        <F>Impervious, Other to Water</F>
+        <F>Other Impervious to Estuarine/Marine</F>
+        <F>0</F>
+        <F>92</F>
+        <F>230</F>
+      </Row>
+      <Row index="1">
+        <F>8211</F>
+        <F>325</F>
+        <F>0.0803</F>
+        <F>Cropland to Water</F>
+        <F>Cropland Herbaceous to Estuarine/Marine</F>
+        <F>0</F>
+        <F>92</F>
+        <F>230</F>
+      </Row>
+      <Row index="2">
+        <F>9211</F>
+        <F>1480</F>
+        <F>0.3657</F>
+        <F>Wetlands, Tidal Non-forested to Water</F>
+        <F>Tidal Wetlands Herbaceous to Estuarine/Marine</F>
+        <F>0</F>
+        <F>92</F>
+        <F>230</F>
+      </Row>
+      <Row index="3">
+        <F>2313</F>
+        <F>3721</F>
+        <F>0.9195</F>
+        <F>Impervious, Other to Water</F>
+        <F>Other Impervious to Riverine Ponds</F>
+        <F>0</F>
+        <F>92</F>
+        <F>230</F>
+      </Row>
+      <Row index="4">
+        <F>2221</F>
+        <F>16</F>
+        <F>0.004</F>
+        <F>Impervious Structures to Impervious Roads</F>
+        <F>Structures to Roads</F>
+        <F>0</F>
+        <F>0</F>
+        <F>0</F>
+      </Row>
+      <Row index="5">
+        <F>2321</F>
+        <F>9195</F>
+        <F>2.2721</F>
+        <F>Impervious, Other to Impervious Roads</F>
+        <F>Other Impervious to Roads</F>
+        <F>0</F>
+        <F>0</F>
+        <F>0</F>
+      </Row>
+      <Row index="6">
+        <F>2621</F>
+        <F>239</F>
+        <F>0.0591</F>
+        <F>Tree Canopy over Impervious to Impervious Roads</F>
+        <F>Tree Canopy Over Other Impervious to Roads</F>
+        <F>0</F>
+        <F>0</F>
+        <F>0</F>
+      </Row>
+      <Row index="7">
+        <F>5221</F>
+        <F>14802</F>
+        <F>3.6577</F>
+        <F>Pervious Developed, Other to Impervious Roads</F>
+        <F>Suspended Succession Herbaceous to Roads</F>
+        <F>0</F>
+        <F>0</F>
+        <F>0</F>
+      </Row>
+      <Row index="8">
+        <F>2721</F>
+        <F>203</F>
+        <F>0.0502</F>
+        <F>Tree Canopy over Turf Grass to Impervious Roads</F>
+        <F>Tree Canopy Over Turf Grass to Roads</F>
+        <F>0</F>
+        <F>0</F>
+        <F>0</F>
+      </Row>
+      <Row index="9">
+        <F>4121</F>
+        <F>22</F>
+        <F>0.0054</F>
+        <F>Forest to Impervious Roads</F>
+        <F>Forest to Roads</F>
+        <F>0</F>
+        <F>0</F>
+        <F>0</F>
+      </Row>
+      <Row index="10">
+        <F>4221</F>
+        <F>1825</F>
+        <F>0.451</F>
+        <F>Tree Canopy, Other to Impervious Roads</F>
+        <F>Other Tree Canopy to Roads</F>
+        <F>0</F>
+        <F>0</F>
+        <F>0</F>
+      </Row>
+      <Row index="11">
+        <F>2322</F>
+        <F>59103</F>
+        <F>14.6048</F>
+        <F>Impervious, Other to Impervious Structures</F>
+        <F>Other Impervious to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="12">
+        <F>2422</F>
+        <F>66</F>
+        <F>0.0163</F>
+        <F>Tree Canopy over Impervious to Impervious Structures</F>
+        <F>Tree Canopy Over Roads to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="13">
+        <F>2522</F>
+        <F>14</F>
+        <F>0.0035</F>
+        <F>Tree Canopy over Impervious to Impervious Structures</F>
+        <F>Tree Canopy Over Structures to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="14">
+        <F>2622</F>
+        <F>830</F>
+        <F>0.2051</F>
+        <F>Tree Canopy over Impervious to Impervious Structures</F>
+        <F>Tree Canopy Over Other Impervious to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="15">
+        <F>2822</F>
+        <F>2076</F>
+        <F>0.513</F>
+        <F>Turf Grass to Impervious Structures</F>
+        <F>Turf Grass to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="16">
+        <F>5222</F>
+        <F>6920</F>
+        <F>1.71</F>
+        <F>Pervious Developed, Other to Impervious Structures</F>
+        <F>Suspended Succession Herbaceous to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="17">
+        <F>2722</F>
+        <F>351</F>
+        <F>0.0867</F>
+        <F>Tree Canopy over Turf Grass to Impervious Structures</F>
+        <F>Tree Canopy Over Turf Grass to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="18">
+        <F>4222</F>
+        <F>2862</F>
+        <F>0.7072000000000001</F>
+        <F>Tree Canopy, Other to Impervious Structures</F>
+        <F>Other Tree Canopy to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="19">
+        <F>5622</F>
+        <F>1</F>
+        <F>0.0002</F>
+        <F>Natural Succession to Impervious Structures</F>
+        <F>Natural Succession Scrub/Shrub to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="20">
+        <F>8222</F>
+        <F>1061</F>
+        <F>0.2622</F>
+        <F>Cropland to Impervious Structures</F>
+        <F>Cropland Herbaceous to Structures</F>
+        <F>235</F>
+        <F>6</F>
+        <F>2</F>
+      </Row>
+      <Row index="21">
+        <F>1423</F>
+        <F>3216</F>
+        <F>0.7947</F>
+        <F>Water to Impervious, Other</F>
+        <F>Terrene Ponds to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="22">
+        <F>1523</F>
+        <F>26702</F>
+        <F>6.5983</F>
+        <F>Water to Impervious, Other</F>
+        <F>Lotic Water (fresh) to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="23">
+        <F>2223</F>
+        <F>5139</F>
+        <F>1.2699</F>
+        <F>Impervious Structures to Impervious, Other</F>
+        <F>Structures to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="24">
+        <F>2423</F>
+        <F>314</F>
+        <F>0.0776</F>
+        <F>Tree Canopy over Impervious to Impervious, Other</F>
+        <F>Tree Canopy Over Roads to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="25">
+        <F>2623</F>
+        <F>282</F>
+        <F>0.0697</F>
+        <F>Tree Canopy over Impervious to Impervious, Other</F>
+        <F>Tree Canopy Over Other Impervious to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="26">
+        <F>2823</F>
+        <F>244708</F>
+        <F>60.4691</F>
+        <F>Turf Grass to Impervious, Other</F>
+        <F>Turf Grass to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="27">
+        <F>2923</F>
+        <F>2</F>
+        <F>0.0005</F>
+        <F>Pervious Developed, Other to Impervious, Other</F>
+        <F>Transitional Barren to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="28">
+        <F>5223</F>
+        <F>71456</F>
+        <F>17.6573</F>
+        <F>Pervious Developed, Other to Impervious, Other</F>
+        <F>Suspended Succession Herbaceous to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="29">
+        <F>2723</F>
+        <F>31556</F>
+        <F>7.7977</F>
+        <F>Tree Canopy over Turf Grass to Impervious, Other</F>
+        <F>Tree Canopy Over Turf Grass to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="30">
+        <F>4123</F>
+        <F>3104</F>
+        <F>0.767</F>
+        <F>Forest to Impervious, Other</F>
+        <F>Forest to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="31">
+        <F>4223</F>
+        <F>10110</F>
+        <F>2.4983</F>
+        <F>Tree Canopy, Other to Impervious, Other</F>
+        <F>Other Tree Canopy to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="32">
+        <F>5623</F>
+        <F>263</F>
+        <F>0.065</F>
+        <F>Natural Succession to Impervious, Other</F>
+        <F>Natural Succession Scrub/Shrub to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="33">
+        <F>8223</F>
+        <F>39374</F>
+        <F>9.7296</F>
+        <F>Cropland to Impervious, Other</F>
+        <F>Cropland Herbaceous to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="34">
+        <F>8323</F>
+        <F>4865</F>
+        <F>1.2022</F>
+        <F>Pasture/Hay to Impervious, Other</F>
+        <F>Pasture/Hay Barren to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="35">
+        <F>8423</F>
+        <F>3424</F>
+        <F>0.8461</F>
+        <F>Pasture/Hay to Impervious, Other</F>
+        <F>Pasture/Hay Herbaceous to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="36">
+        <F>9223</F>
+        <F>24575</F>
+        <F>6.0727</F>
+        <F>Wetlands, Tidal Non-forested to Impervious, Other</F>
+        <F>Tidal Wetlands Herbaceous to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="37">
+        <F>9423</F>
+        <F>353</F>
+        <F>0.0872</F>
+        <F>Tree Canopy, Other to Impervious, Other</F>
+        <F>Tidal Wetlands Tree Canopy to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="38">
+        <F>9523</F>
+        <F>890</F>
+        <F>0.2199</F>
+        <F>Forest to Impervious, Other</F>
+        <F>Tidal Wetlands Forest to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="39">
+        <F>6223</F>
+        <F>6807</F>
+        <F>1.6821</F>
+        <F>Wetlands, Riverine Non-forested to Impervious, Other</F>
+        <F>Riverine Wetlands Herbaceous to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="40">
+        <F>6423</F>
+        <F>52</F>
+        <F>0.0128</F>
+        <F>Tree Canopy, Other to Impervious, Other</F>
+        <F>Riverine Wetlands Tree Canopy to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="41">
+        <F>7223</F>
+        <F>720</F>
+        <F>0.1779</F>
+        <F>Wetlands, Terrene Non-forested to Impervious, Other</F>
+        <F>Terrene Wetlands Herbaceous to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="42">
+        <F>7523</F>
+        <F>33</F>
+        <F>0.008200000000000001</F>
+        <F>Forest to Impervious, Other</F>
+        <F>Terrene Wetlands Forest to Other Impervious</F>
+        <F>89</F>
+        <F>89</F>
+        <F>89</F>
+      </Row>
+      <Row index="43">
+        <F>2124</F>
+        <F>14635</F>
+        <F>3.6164</F>
+        <F>Impervious Roads to Tree Canopy over Impervious</F>
+        <F>Roads to Tree Canopy Over Roads</F>
+        <F>138</F>
+        <F>138</F>
+        <F>136</F>
+      </Row>
+      <Row index="44">
+        <F>2225</F>
+        <F>17910</F>
+        <F>4.4257</F>
+        <F>Impervious Structures to Tree Canopy over Impervious</F>
+        <F>Structures to Tree Canopy Over Structures</F>
+        <F>138</F>
+        <F>138</F>
+        <F>136</F>
+      </Row>
+      <Row index="45">
+        <F>2326</F>
+        <F>41714</F>
+        <F>10.3078</F>
+        <F>Impervious, Other to Tree Canopy over Impervious</F>
+        <F>Other Impervious to Tree Canopy Over Other Impervious</F>
+        <F>138</F>
+        <F>138</F>
+        <F>136</F>
+      </Row>
+      <Row index="46">
+        <F>2726</F>
+        <F>116</F>
+        <F>0.0287</F>
+        <F>Tree Canopy over Turf Grass to Tree Canopy over Impervious</F>
+        <F>Tree Canopy Over Turf Grass to Tree Canopy Over Other Impervious</F>
+        <F>138</F>
+        <F>138</F>
+        <F>136</F>
+      </Row>
+      <Row index="47">
+        <F>4126</F>
+        <F>53</F>
+        <F>0.0131</F>
+        <F>Forest to Tree Canopy over Impervious</F>
+        <F>Forest to Tree Canopy Over Other Impervious</F>
+        <F>138</F>
+        <F>138</F>
+        <F>136</F>
+      </Row>
+      <Row index="48">
+        <F>1428</F>
+        <F>149234</F>
+        <F>36.8768</F>
+        <F>Water to Turf Grass</F>
+        <F>Terrene Ponds to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="49">
+        <F>2228</F>
+        <F>90</F>
+        <F>0.0222</F>
+        <F>Impervious Structures to Turf Grass</F>
+        <F>Structures to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="50">
+        <F>2328</F>
+        <F>165389</F>
+        <F>40.8688</F>
+        <F>Impervious, Other to Turf Grass</F>
+        <F>Other Impervious to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="51">
+        <F>2428</F>
+        <F>1419</F>
+        <F>0.3506</F>
+        <F>Tree Canopy over Impervious to Turf Grass</F>
+        <F>Tree Canopy Over Roads to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="52">
+        <F>2528</F>
+        <F>3792</F>
+        <F>0.9370000000000001</F>
+        <F>Tree Canopy over Impervious to Turf Grass</F>
+        <F>Tree Canopy Over Structures to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="53">
+        <F>2628</F>
+        <F>17141</F>
+        <F>4.2357</F>
+        <F>Tree Canopy over Impervious to Turf Grass</F>
+        <F>Tree Canopy Over Other Impervious to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="54">
+        <F>5228</F>
+        <F>28047</F>
+        <F>6.9306</F>
+        <F>Pervious Developed, Other to Turf Grass</F>
+        <F>Suspended Succession Herbaceous to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="55">
+        <F>2728</F>
+        <F>13302</F>
+        <F>3.287</F>
+        <F>Tree Canopy over Turf Grass to Turf Grass</F>
+        <F>Tree Canopy Over Turf Grass to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="56">
+        <F>4128</F>
+        <F>239</F>
+        <F>0.0591</F>
+        <F>Forest to Turf Grass</F>
+        <F>Forest to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="57">
+        <F>4228</F>
+        <F>1513</F>
+        <F>0.3739</F>
+        <F>Tree Canopy, Other to Turf Grass</F>
+        <F>Other Tree Canopy to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="58">
+        <F>5428</F>
+        <F>83488</F>
+        <F>20.6305</F>
+        <F>Natural Succession to Turf Grass</F>
+        <F>Natural Succession Barren to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="59">
+        <F>7528</F>
+        <F>1</F>
+        <F>0.0002</F>
+        <F>Forest to Turf Grass</F>
+        <F>Terrene Wetlands Forest to Turf Grass</F>
+        <F>233</F>
+        <F>255</F>
+        <F>190</F>
+      </Row>
+      <Row index="60">
+        <F>2229</F>
+        <F>391</F>
+        <F>0.09660000000000001</F>
+        <F>Impervious Structures to Pervious Developed, Other</F>
+        <F>Structures to Transitional Barren</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="61">
+        <F>2329</F>
+        <F>1</F>
+        <F>0.0002</F>
+        <F>Impervious, Other to Pervious Developed, Other</F>
+        <F>Other Impervious to Transitional Barren</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="62">
+        <F>5229</F>
+        <F>1112</F>
+        <F>0.2748</F>
+        <F>Pervious Developed, Other to Pervious Developed, Other</F>
+        <F>Suspended Succession Herbaceous to Transitional Barren</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="63">
+        <F>2352</F>
+        <F>21429</F>
+        <F>5.2953</F>
+        <F>Impervious, Other to Pervious Developed, Other</F>
+        <F>Other Impervious to Suspended Succession Herbaceous</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="64">
+        <F>2452</F>
+        <F>8887</F>
+        <F>2.196</F>
+        <F>Tree Canopy over Impervious to Pervious Developed, Other</F>
+        <F>Tree Canopy Over Roads to Suspended Succession Herbaceous</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="65">
+        <F>2652</F>
+        <F>454</F>
+        <F>0.1122</F>
+        <F>Tree Canopy over Impervious to Pervious Developed, Other</F>
+        <F>Tree Canopy Over Other Impervious to Suspended Succession Herbaceous</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="66">
+        <F>2752</F>
+        <F>836</F>
+        <F>0.2066</F>
+        <F>Tree Canopy over Turf Grass to Pervious Developed, Other</F>
+        <F>Tree Canopy Over Turf Grass to Suspended Succession Herbaceous</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="67">
+        <F>4152</F>
+        <F>115</F>
+        <F>0.0284</F>
+        <F>Forest to Pervious Developed, Other</F>
+        <F>Forest to Suspended Succession Herbaceous</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="68">
+        <F>4252</F>
+        <F>510</F>
+        <F>0.126</F>
+        <F>Tree Canopy, Other to Pervious Developed, Other</F>
+        <F>Other Tree Canopy to Suspended Succession Herbaceous</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="69">
+        <F>5452</F>
+        <F>772</F>
+        <F>0.1908</F>
+        <F>Natural Succession to Pervious Developed, Other</F>
+        <F>Natural Succession Barren to Suspended Succession Herbaceous</F>
+        <F>255</F>
+        <F>255</F>
+        <F>115</F>
+      </Row>
+      <Row index="70">
+        <F>1427</F>
+        <F>191</F>
+        <F>0.0472</F>
+        <F>Water to Tree Canopy over Turf Grass</F>
+        <F>Terrene Ponds to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="71">
+        <F>1527</F>
+        <F>1</F>
+        <F>0.0002</F>
+        <F>Water to Tree Canopy over Turf Grass</F>
+        <F>Lotic Water (fresh) to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="72">
+        <F>2127</F>
+        <F>44</F>
+        <F>0.0109</F>
+        <F>Impervious Roads to Tree Canopy over Turf Grass</F>
+        <F>Roads to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="73">
+        <F>2227</F>
+        <F>405</F>
+        <F>0.1001</F>
+        <F>Impervious Structures to Tree Canopy over Turf Grass</F>
+        <F>Structures to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="74">
+        <F>2327</F>
+        <F>19</F>
+        <F>0.0047</F>
+        <F>Impervious, Other to Tree Canopy over Turf Grass</F>
+        <F>Other Impervious to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="75">
+        <F>2827</F>
+        <F>75107</F>
+        <F>18.5595</F>
+        <F>Turf Grass to Tree Canopy over Turf Grass</F>
+        <F>Turf Grass to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="76">
+        <F>2927</F>
+        <F>62</F>
+        <F>0.0153</F>
+        <F>Pervious Developed, Other to Tree Canopy over Turf Grass</F>
+        <F>Transitional Barren to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="77">
+        <F>5227</F>
+        <F>104</F>
+        <F>0.0257</F>
+        <F>Pervious Developed, Other to Tree Canopy over Turf Grass</F>
+        <F>Suspended Succession Herbaceous to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="78">
+        <F>4127</F>
+        <F>3383</F>
+        <F>0.836</F>
+        <F>Forest to Tree Canopy over Turf Grass</F>
+        <F>Forest to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="79">
+        <F>4227</F>
+        <F>15430</F>
+        <F>3.8129</F>
+        <F>Tree Canopy, Other to Tree Canopy over Turf Grass</F>
+        <F>Other Tree Canopy to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="80">
+        <F>5527</F>
+        <F>18</F>
+        <F>0.0044</F>
+        <F>Natural Succession to Tree Canopy over Turf Grass</F>
+        <F>Natural Succession Herbaceous to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="81">
+        <F>5627</F>
+        <F>69</F>
+        <F>0.0171</F>
+        <F>Natural Succession to Tree Canopy over Turf Grass</F>
+        <F>Natural Succession Scrub/Shrub to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="82">
+        <F>8227</F>
+        <F>2</F>
+        <F>0.0005</F>
+        <F>Cropland to Tree Canopy over Turf Grass</F>
+        <F>Cropland Herbaceous to Tree Canopy Over Turf Grass</F>
+        <F>115</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="83">
+        <F>1441</F>
+        <F>11</F>
+        <F>0.0027</F>
+        <F>Water to Forest</F>
+        <F>Terrene Ponds to Forest</F>
+        <F>38</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="84">
+        <F>5541</F>
+        <F>3</F>
+        <F>0.0007</F>
+        <F>Natural Succession to Forest</F>
+        <F>Natural Succession Herbaceous to Forest</F>
+        <F>38</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="85">
+        <F>8241</F>
+        <F>32</F>
+        <F>0.007900000000000001</F>
+        <F>Cropland to Forest</F>
+        <F>Cropland Herbaceous to Forest</F>
+        <F>38</F>
+        <F>115</F>
+        <F>0</F>
+      </Row>
+      <Row index="86">
+        <F>1442</F>
+        <F>85</F>
+        <F>0.021</F>
+        <F>Water to Tree Canopy, Other</F>
+        <F>Terrene Ponds to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="87">
+        <F>1542</F>
+        <F>21</F>
+        <F>0.0052</F>
+        <F>Water to Tree Canopy, Other</F>
+        <F>Lotic Water (fresh) to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="88">
+        <F>2142</F>
+        <F>34</F>
+        <F>0.008399999999999999</F>
+        <F>Impervious Roads to Tree Canopy, Other</F>
+        <F>Roads to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="89">
+        <F>2242</F>
+        <F>4</F>
+        <F>0.001</F>
+        <F>Impervious Structures to Tree Canopy, Other</F>
+        <F>Structures to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="90">
+        <F>2342</F>
+        <F>3</F>
+        <F>0.0007</F>
+        <F>Impervious, Other to Tree Canopy, Other</F>
+        <F>Other Impervious to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="91">
+        <F>2842</F>
+        <F>38</F>
+        <F>0.0094</F>
+        <F>Turf Grass to Tree Canopy, Other</F>
+        <F>Turf Grass to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="92">
+        <F>4142</F>
+        <F>4757</F>
+        <F>1.1755</F>
+        <F>Forest to Tree Canopy, Other</F>
+        <F>Forest to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="93">
+        <F>5442</F>
+        <F>40</F>
+        <F>0.009900000000000001</F>
+        <F>Natural Succession to Tree Canopy, Other</F>
+        <F>Natural Succession Barren to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="94">
+        <F>5542</F>
+        <F>7494</F>
+        <F>1.8518</F>
+        <F>Natural Succession to Tree Canopy, Other</F>
+        <F>Natural Succession Herbaceous to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="95">
+        <F>5642</F>
+        <F>397</F>
+        <F>0.09810000000000001</F>
+        <F>Natural Succession to Tree Canopy, Other</F>
+        <F>Natural Succession Scrub/Shrub to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="96">
+        <F>8242</F>
+        <F>3941</F>
+        <F>0.9738</F>
+        <F>Cropland to Tree Canopy, Other</F>
+        <F>Cropland Herbaceous to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="97">
+        <F>8442</F>
+        <F>1340</F>
+        <F>0.3311</F>
+        <F>Pasture/Hay to Tree Canopy, Other</F>
+        <F>Pasture/Hay Herbaceous to Other Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="98">
+        <F>2355</F>
+        <F>2952</F>
+        <F>0.7295</F>
+        <F>Impervious, Other to Natural Succession</F>
+        <F>Other Impervious to Natural Succession Herbaceous</F>
+        <F>170</F>
+        <F>255</F>
+        <F>0</F>
+      </Row>
+      <Row index="99">
+        <F>2455</F>
+        <F>54</F>
+        <F>0.0133</F>
+        <F>Tree Canopy over Impervious to Natural Succession</F>
+        <F>Tree Canopy Over Roads to Natural Succession Herbaceous</F>
+        <F>170</F>
+        <F>255</F>
+        <F>0</F>
+      </Row>
+      <Row index="100">
+        <F>2655</F>
+        <F>89</F>
+        <F>0.022</F>
+        <F>Tree Canopy over Impervious to Natural Succession</F>
+        <F>Tree Canopy Over Other Impervious to Natural Succession Herbaceous</F>
+        <F>170</F>
+        <F>255</F>
+        <F>0</F>
+      </Row>
+      <Row index="101">
+        <F>2755</F>
+        <F>1</F>
+        <F>0.0002</F>
+        <F>Tree Canopy over Turf Grass to Natural Succession</F>
+        <F>Tree Canopy Over Turf Grass to Natural Succession Herbaceous</F>
+        <F>170</F>
+        <F>255</F>
+        <F>0</F>
+      </Row>
+      <Row index="102">
+        <F>4155</F>
+        <F>154</F>
+        <F>0.0381</F>
+        <F>Forest to Natural Succession</F>
+        <F>Forest to Natural Succession Herbaceous</F>
+        <F>170</F>
+        <F>255</F>
+        <F>0</F>
+      </Row>
+      <Row index="103">
+        <F>4255</F>
+        <F>375</F>
+        <F>0.0927</F>
+        <F>Tree Canopy, Other to Natural Succession</F>
+        <F>Other Tree Canopy to Natural Succession Herbaceous</F>
+        <F>170</F>
+        <F>255</F>
+        <F>0</F>
+      </Row>
+      <Row index="104">
+        <F>2784</F>
+        <F>12</F>
+        <F>0.003</F>
+        <F>Tree Canopy over Turf Grass to Pasture/Hay</F>
+        <F>Tree Canopy Over Turf Grass to Pasture/Hay Herbaceous</F>
+        <F>255</F>
+        <F>211</F>
+        <F>127</F>
+      </Row>
+      <Row index="105">
+        <F>4284</F>
+        <F>85</F>
+        <F>0.021</F>
+        <F>Tree Canopy, Other to Pasture/Hay</F>
+        <F>Other Tree Canopy to Pasture/Hay Herbaceous</F>
+        <F>255</F>
+        <F>211</F>
+        <F>127</F>
+      </Row>
+      <Row index="106">
+        <F>8384</F>
+        <F>34889</F>
+        <F>8.6213</F>
+        <F>Pasture/Hay to Pasture/Hay</F>
+        <F>Pasture/Hay Barren to Pasture/Hay Herbaceous</F>
+        <F>255</F>
+        <F>211</F>
+        <F>127</F>
+      </Row>
+      <Row index="107">
+        <F>2392</F>
+        <F>1859</F>
+        <F>0.4594</F>
+        <F>Impervious, Other to Wetlands, Tidal Non-forested</F>
+        <F>Other Impervious to Tidal Wetlands Herbaceous</F>
+        <F>0</F>
+        <F>168</F>
+        <F>132</F>
+      </Row>
+      <Row index="108">
+        <F>2692</F>
+        <F>28</F>
+        <F>0.0069</F>
+        <F>Tree Canopy over Impervious to Wetlands, Tidal Non-forested</F>
+        <F>Tree Canopy Over Other Impervious to Tidal Wetlands Herbaceous</F>
+        <F>0</F>
+        <F>168</F>
+        <F>132</F>
+      </Row>
+      <Row index="109">
+        <F>9492</F>
+        <F>1125</F>
+        <F>0.278</F>
+        <F>Tree Canopy, Other to Wetlands, Tidal Non-forested</F>
+        <F>Tidal Wetlands Tree Canopy to Tidal Wetlands Herbaceous</F>
+        <F>0</F>
+        <F>168</F>
+        <F>132</F>
+      </Row>
+      <Row index="110">
+        <F>9592</F>
+        <F>1503</F>
+        <F>0.3714</F>
+        <F>Forest to Wetlands, Tidal Non-forested</F>
+        <F>Tidal Wetlands Forest to Tidal Wetlands Herbaceous</F>
+        <F>0</F>
+        <F>168</F>
+        <F>132</F>
+      </Row>
+      <Row index="111">
+        <F>1494</F>
+        <F>116</F>
+        <F>0.0287</F>
+        <F>Water to Tree Canopy, Other</F>
+        <F>Terrene Ponds to Tidal Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="112">
+        <F>1594</F>
+        <F>257</F>
+        <F>0.0635</F>
+        <F>Water to Tree Canopy, Other</F>
+        <F>Lotic Water (fresh) to Tidal Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="113">
+        <F>9294</F>
+        <F>1110</F>
+        <F>0.2743</F>
+        <F>Wetlands, Tidal Non-forested to Tree Canopy, Other</F>
+        <F>Tidal Wetlands Herbaceous to Tidal Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="114">
+        <F>9394</F>
+        <F>1</F>
+        <F>0.0002</F>
+        <F>Wetlands, Tidal Non-forested to Tree Canopy, Other</F>
+        <F>Tidal Wetlands Scrub/Shrub to Tidal Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="115">
+        <F>9594</F>
+        <F>5849</F>
+        <F>1.4453</F>
+        <F>Forest to Tree Canopy, Other</F>
+        <F>Tidal Wetlands Forest to Tidal Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="116">
+        <F>2362</F>
+        <F>54</F>
+        <F>0.0133</F>
+        <F>Impervious, Other to Wetlands, Riverine Non-forested</F>
+        <F>Other Impervious to Riverine Wetlands Herbaceous</F>
+        <F>77</F>
+        <F>209</F>
+        <F>148</F>
+      </Row>
+      <Row index="117">
+        <F>6264</F>
+        <F>282</F>
+        <F>0.0697</F>
+        <F>Wetlands, Riverine Non-forested to Tree Canopy, Other</F>
+        <F>Riverine Wetlands Herbaceous to Riverine Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="118">
+        <F>6564</F>
+        <F>1138</F>
+        <F>0.2812</F>
+        <F>Forest to Tree Canopy, Other</F>
+        <F>Riverine Wetlands Forest to Riverine Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+      <Row index="119">
+        <F>7574</F>
+        <F>1552</F>
+        <F>0.3835</F>
+        <F>Forest to Tree Canopy, Other</F>
+        <F>Terrene Wetlands Forest to Terrene Wetlands Tree Canopy</F>
+        <F>56</F>
+        <F>168</F>
+        <F>0</F>
+      </Row>
+    </GDALRasterAttributeTable>
+  </PAMRasterBand>
+</PAMDataset>

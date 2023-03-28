@@ -84,9 +84,9 @@ mv<- mapview
 
 ## Portsmouth_landcover
 ```{r}
-port_14 <- read_stars("Data/lc/port_51740_lc_2014/port_51740_landcover_2014.tif")
-port_18 <- read_stars("Data/lc/port_51740_lc_2018/port_51740_landcover_2018.tif")
-port_area <- st_read("Data/boundary/portsmouth.shp")
+port_14 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/lc/port_51740_lc_2014/port_51740_landcover_2014.tif")
+port_18 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/lc/port_51740_lc_2018/port_51740_landcover_2018.tif")
+port_area <- st_read("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/boundary/portsmouth.shp")
 # Transform the test area object to the same CRS as the raster image
 port_area <- port_area %>% 
   st_transform(crs = st_crs(port_14))
@@ -137,7 +137,8 @@ rm(port_14_10,port_18_10,port_14,port_18)
 
 ```{r}
 options(tigris_use_cache = TRUE)
-# port
+
+
 port_tracts14 <- 
   get_acs(geography = "block group", variables = c("B01003_001E","B02001_002E","B19013_001E","B25002_001E","B06012_002E","B27011_008E"), 
           year=2014, state="51", county="Portsmouth", geometry=T, output="wide") %>%
@@ -149,7 +150,12 @@ port_tracts14 <-
 dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
   mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
          ) %>%
-  dplyr::select(-Whites, -GEOID)
+  dplyr::select(-Whites)
+
+
+port_tracts14 <-
+  port_tracts14%>%
+  mutate(area = st_area(geometry))
 
 port_tracts14[is.na(port_tracts14)]<- 0
 
@@ -164,21 +170,28 @@ port_tracts18 <-
 dplyr::select(-NAME, -starts_with("B")) %>% #-starts_with("B") awesome!
   mutate(pctWhite = ifelse(TotalPop > 0, Whites / TotalPop * 100,0)
          ) %>%
-  dplyr::select(-Whites, -GEOID)
+  dplyr::select(-Whites)
 port_tracts18[is.na(port_tracts18)]<- 0
 
+port_tracts18 <-
+  port_tracts18%>%
+  mutate(
+         area = st_area(geometry))
+
 port_tract <- st_join(port_tracts14, port_tracts18) %>%
-  mutate(popchange = (TotalPop.y - TotalPop.x)/TotalPop.x,
-         pctwhitechange = pctWhite.y - pctWhite.x,
-         Unitchange = TotalUnit.y - TotalUnit.x,
-         MedHHIncchange = MedHHInc.y - MedHHInc.x)%>%
+  mutate(popchange = (TotalPop.y - TotalPop.x)/(TotalPop.x * area.x),
+         pctwhitechange = (pctWhite.y - pctWhite.x),
+         Unitchange = (TotalUnit.y - TotalUnit.x)/area.x,
+         MedHHIncchange = (MedHHInc.y - MedHHInc.x)/area.x,
+         Area = area.x,
+         GEOID = GEOID.x)%>%
   dplyr::select(-ends_with(".x"),-ends_with(".y"))
 ```
 
 ## dem image
 ```{r}
-dem1 <- read_stars("Data/DEM/USGS_1_n38w077_20170509.tif")
-dem2 <- read_stars("Data/DEM/USGS_1_n37w077_20160315.tif")
+dem1 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/DEM/USGS_1_n38w077_20170509.tif")
+dem2 <- read_stars("~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/DEM/USGS_1_n37w077_20160315.tif")
 dem <- st_mosaic(dem1, dem2)
 dem2 <- st_warp(dem2, crs=st_crs(port_14_10_rc))
 dem_port <- st_crop (dem2, port_area)
@@ -189,7 +202,7 @@ port_slope<- slope(dem_port)
 
 ## soil
 ```{r}
-soil <- st_read('Data/Soil/Port/port_soil.shp', crs= 'EPSG:4326')
+soil <- st_read('~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/Soil/Port/port_soil.shp', crs= 'EPSG:4326')
 soilclass <- soil%>%
   mutate(soil = case_when(
     Port__Rati == 'D' ~ 6,
@@ -205,6 +218,7 @@ dplyr::select(-colnames(soil),geometry)%>%
   
 soil_port <- st_crop(soilclass, port_area)
 ```
+
 ```{r}
 rm(dem1,dem2,dem)
 ```
@@ -280,11 +294,28 @@ other_18_mean<- focal2(other_18_mean["other"], matrix(1, 3, 3), "mean")
 ## join all the data
 
 ```{r warning=FALSE}
-port14 <-  cbind(port_14_10_crop,canopy_14_mean, road_14, other_14_mean, shrub_14_mean, water_14_mean, port_14_pcnt_imperv, port_change_rc,port_change) # change impervious(0, 1, -1) -1 is targeted
-rm(canopy_14_mean, road_14, other_14_mean, shrub_14_mean, water_14_mean, port_14_pcnt_imperv, port_change_rc)
+port14 <- cbind(
+                as.data.frame(canopy_14_mean)['canopy'],
+                as.data.frame(road_14)['road'],
+                as.data.frame(other_14_mean)['other'],
+                as.data.frame(shrub_14_mean)['shrub'],
+                as.data.frame(water_14_mean)['water'],
+                as.data.frame(port_14_pcnt_imperv)['lc'] %>%
+                rename(imperv = lc ),
+                as.data.frame(port_change_rc)[4]%>%
+                rename(lcchange = lc )
+                )
 
-port18 <- cbind(port_18_10_crop, canopy_18_mean, road_18,other_18_mean, shrub_18_mean, water_18_mean,port_18_pcnt_imperv)
-rm(canopy_18_mean, road_18, other_18_mean, shrub_18_mean, water_18_mean, port_18_pcnt_imperv)
+port18 <- cbind(
+                as.data.frame(canopy_18_mean)['canopy'],
+                as.data.frame(road_18)['road'],
+                as.data.frame(other_18_mean)['other'],
+                as.data.frame(shrub_18_mean)['shrub'],
+                as.data.frame(water_18_mean)['water'],
+                as.data.frame(port_18_pcnt_imperv)['lc'] %>%
+                rename(imperv = lc )
+                )
+
 
 port_14 <- 
   st_join(port_14_10_rc,port_tract) %>%
@@ -305,17 +336,26 @@ rm(dem_isle,port_slope, port_14_10_crop, port_14_10_rc, port_14_canopy, port_14_
 ```
 
 ```{r}
+port_14 <- readRDS( "~/Github/Precision-Forecasts-of-Land-Cover-Change/Rdata/port_14.rds")
+port_18 <- readRDS("~/Github/Precision-Forecasts-of-Land-Cover-Change/Rdata/port_18.rds")
+```
+
+```{r}
 port14_df <- 
   as.data.frame(port_14) %>% 
-  rename(originallc = port_51740_landcover_2014.tif ,
+  rename(
         terrain = USGS_1_n37w077_20160315.tif )%>%
   cbind(., port14)%>% na.omit()
 port18_df <- 
   as.data.frame(port_18) %>% 
-  rename(originallc = port_51740_landcover_2018.tif ,
+  rename(
           terrain = USGS_1_n37w077_20160315.tif) %>%
   cbind(., port18)%>%na.omit()
 ```
 
 
 
+```{r}
+saveRDS(port14_df, "~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/output/port14_df.rds")
+saveRDS(port18_df, "~/Github/Precision-Forecasts-of-Land-Cover-Change/Data/output/port18_df.rds")
+```
