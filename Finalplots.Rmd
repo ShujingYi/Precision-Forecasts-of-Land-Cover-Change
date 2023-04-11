@@ -15,24 +15,30 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+[Return to MUSA 801 Projects Page](https://pennmusa.github.io/MUSA_801.io/)
+
+This project was completed for the MUSA/Smart Cities Practicum course (MUSA 801) instructed by Michael Fichman and Matthew Harris. We are grateful to our instructors for their continued support and feedback. We would like to give special thanks to KC Filippino and Ben McFarlane from Hampton Roads Planning District Commission, and Dexter Locke from the United States Forest Service for providing data, insight, and support throughout the semester. This project would not have been possible without them.
+
 ## 1.Introduction
 ### 1.1 Abstract
+This project aims to develop a precision forecast model for land cover change at the Chesapeake Watershed, focusing on three representative counties: Isle of Wight, James City, and Portsmouth. By leveraging high-resolution longitudinal land use and land cover data provided by the Chesapeake Conservancy, the model will predict land cover conversions from pervious to impervious surfaces. This forecast will enable land use and environmental planners to visualize and assess potential impacts on flood risk, heat stress, and heat island risks in the region. The model will be generalizable to the county level, incorporating only widely available inputs, thus allowing any municipality within the Chesapeake basin to replicate the analysis. This proof-of-concept project will demonstrate the utility of precision conservation in climate adaptation and mitigation planning and provide a valuable tool for planners and policymakers across the region.
 
 
-### 1.2 Background
+![](images/HRPDC.jpg)
 
 
-The Chesapeake Bay watershed is a vital resource, both ecologically and economically. In the region, we focus on three different types of counties - James City, Isle of Wight, and Portsmouth, as the prototype. 
-
-![HRPDC](images/HRPDC.jpg)
-
-
-### 1.3 Motivation & Use Case
+### 1.2 Motivation & Use Case
 
 To build resilient communities, the HRPDC has set up a green infrastructure plan. This plan aims to to identify and prioritize a network of valuable conservation lands in order to achieve multiple benefits, such as habitat protection, drinking water supply protection, stormwater management and recreational opportunities. A new component of this plan is to build a model for the potential future growth and identify which areas of the green infrastructure network are most at risk for development.
 
 ## 2. Exploratory Analysis
 ### 2.1 Understanding landcover data
+The Chesapeake Conservancy supplies us with high-resolution landcover data, which is essential for our precision conservation efforts. This data is a vast raster dataset with an impressive 1-meter accuracy, offering 900 times more detail than the commonly used 30-meter resolution National Land Cover Dataset. This level of detail is critical in capturing subtle changes in land use and land cover. Within the landcover classification, pervious surfaces include categories such as tree canopy, shrub, and wetlands, which allow water to infiltrate the ground, while impervious surfaces encompass categories like roads and structures that prevent water infiltration, leading to increased runoff and potential flooding issues. This detailed classification enables us to better understand and predict land cover changes, particularly the conversion from pervious to impervious surfaces.
+
+![](images/Data.png)
+
+[Data Source](https://www.chesapeakeconservancy.org/conservation-innovation-center/high-resolution-data/lulc-data-project-2022/)
+
 
 ### 2.2 Data Cleaning and Wrangling
 
